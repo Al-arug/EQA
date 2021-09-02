@@ -1,0 +1,210 @@
+\documentclass[11pt, a4paper]{article}
+
+\usepackage{mlt-thesis-2015}
+
+% With Xetex/Luatex this shouldn't be used
+%\usepackage[utf8]{inputenc}
+
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{float}
+\usepackage{hyperref}
+
+
+\title{Embodied question answering in\\ robotic environment}
+\subtitle{Automatic generation of a synthetic question-answer data-set }
+\author{}
+
+\begin{document}
+
+%% ============================================================================
+%% Title page
+%% ============================================================================
+\begin{titlepage}
+
+\maketitle
+
+\vfill
+
+\begingroup
+\renewcommand*{\arraystretch}{1.2}
+\begin{tabular}{l@{\hskip 20mm}l}
+\hline
+Master's Thesis: & 30 credits \\
+Programme: & Master’s Programme in Language Technology\\
+Level: & Advanced level \\
+Semester and year: & Spring, 2020\\
+Supervisor & ()\\
+Examiner & ()\\
+Report number & (number will be provided by the administrators) \\
+Keywords & (Artificial Intelligence,  Natural Language Processing, Computer Vision,\\ Visual Question Answering, Synthetic Data-sets  ) 
+\end{tabular}
+\endgroup
+
+\thispagestyle{empty}
+\end{titlepage}
+
+%% ============================================================================
+%% Abstract
+%% ============================================================================
+\newpage
+\singlespacing
+\section*{Abstract}
+    Our work extends a dataset for Embodied-Question-Answering. Embodied question answering is the task of asking a robot a question about objects in a 3D environment, where the agent is expected to navigate the environment and find the entities in question and answer. The answer system consists of navigation and VQA components.  Each question in the dataset is an executable function that could be run in the environment to yield an answer.  The published dataset for EQA is EQA-V1, and it is a limited dataset that includes only two types of questions, color and location questions. We use the navigational data, required for training the system, from EQA-V1 and generate new questions of two more types, size and spatial questions. Our data extension is intended to better train the system and enhance its ability in performing the task. 
+
+\thispagestyle{empty}
+
+%% ============================================================================
+%% Preface
+%% ============================================================================
+\newpage
+\section*{Preface}
+
+Acknowledgements, etc.
+
+\thispagestyle{empty}
+
+%% ============================================================================
+%% Contents
+%% ============================================================================
+\newpage
+
+\begin{spacing}{0.0}
+\tableofcontents
+\end{spacing}
+
+\thispagestyle{empty}
+
+%% ============================================================================
+%% Introduction
+%% ============================================================================
+\newpage
+\setcounter{page}{1}
+
+\section{Introduction}
+\label{sec:intro}
+
+An intelligent robot must be able to understand and resolve references in its environment (\cite{russell1995artificial}). Our human ability to interact in reference to our visual surroundings, manifested in language, stems from faculties such as perception and memory(\cite{regier1996human}). Perception, in particular, is central to our physical experience of the world (\cite{barsalou1999perceptual}). We conceive the physical world through perception; and we express our conceptualization of the perceptual experience in words(\cite{lakoff2008metaphors}). Therefore, the exhibition of intelligent behaviour is necessitated by having a notion of meaning that associates 'words' with the visual/physical world(\cite{nilsson2007physical}). 
+
+\subsection{meaning}
+
+The  meaning of words is not a mere psychological phenomena. Concrete nouns,for example, have references in the physical world, with physical properties indicated by their meaning. The meaning of a word, is, thus, not only bound up with linguistic characters and mental notion but also with some physical representation in the world. For example, the word "chair" is represented by its token-characters (c,h,a,i,r), contains a perceptual symbolism(mental understanding of the chair's attributes and functions), and refers to an entity with physical features in the world(\cite{mooney}).
+
+In this triangular definition of meaning, vision has an integral part of meaning in which it represents the physical world to language. To recognize a chair, one should, for example, identify the existence of legs, seats, its sizes and geometric shape in a visual scene. These properties of the physical reference of a chair can be clearly represented in a visual form. Therefore visual recognition is part of the conceptualization process that form the perceptual symbol of an entity.(\cite{barsalou1999perceptual})
+
+Perceptual information, however, is more than just visual information. The properties of an object includes other sensory information such as the smell, taste, and texture of an object. For example the meaning of rotten food could be more understood if the food is tasted. 
+
+The formation of a symbolic representation (meaning) requires more than the recognition of perceptual information. The construct of a meaning (symbol) could only be formulated by the existence of knowledge about the relations of the attributes that form an entity.(\cite{barsalou1999perceptual}) refers to the process of forming a symbol as 'componential' or schematic, meaning that a  notion of meaning is a scheme that is logically constructed.
+
+The full meaning is the perceptual representation and the knowledge about it. The meaning of rotten apple is fully understood when we construct a knowledge of the negative aspects of eating it. For example, rotten apples have red-brown colors, and the stomachache that result by eating them leads us to form the  belief that red-brown apples are different from all-red apples, not only by color but also other health/taste attributes, so we classify red-brown apple in different category called "rotten apples". The knowledge about health implications, and the attributes such as colors and smell of a rotten apple help us categorizing the rotten apple in the category of rotten food. (\cite{lakoff2008metaphors}) explains that this attributive characterization can be expressed, for example, in the way we do prototyping and categorization of entities.
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.4]{images/symbolsyststem.png}
+\caption{\cite{roy2005semiotic}}
+\label{fig:roy}
+\end{figure}.
+
+Interactions in the semantic world  has an exchangeable nature. The interaction allows us to form meaning and the formed meaning shape our language and actions. In \ref{fig:roy} we see that the outcomes of our interaction in the world includes not only linguistic implications but also affects the actions(\cite{roy2005semiotic}). 'schemes about the world' are the beliefs we make from the interactions. For example, our negative experience with the red-brown apple made us form the  "belief" that rotten apples are bad. The knowledge of "rotten apples are bad" influence our future actions- makes us not eat the apples with attributes of "rotten". 
+
+The process of comprehending meaning by means of associating attributes with each other to form a belief or draw a conclusion denotes the notion of reasoning. The process of classifying the apple as rotten includes multiple abstractions. We might first identity the apple by its general shape structure, then recognize, from previous experiences, that  apples in red-brown color is not like all-red apples then conclude that the apple is rotten. Reasoning is the ability to take the logical steps to come to a conclusion.  
+ 
+
+
+\subsection{Grounding meaning}
+
+The approaches to ground meaning(form meaning) varies dependent on the aspect of meaning that each approach focuses on. The different methods we review below approach meaning as a mental notion, a map of connected knowledge nodes,  vision and language representation or  the combination of different aspects of meaning representation. 
+
+
+Word-meaning in a Vector Semantic Space (VSM) represents a mental aspect of meaning notion(\cite{Turney_2010})). Space can be understood by imagining our minds as a space that we allocate meaning representation in them. In VSM the mind (represented as neural language model) is an artificial space where word meanings are allocated at different distances from each other depending on their categorization, such as a rotten apple is closer to fresh apples than to chair. 
+
+There are multiple hypothesis to representing word-meaning in a Vector Semantic Space(VSM). Distributional hypothesis is a popular example of word-representaion in VSM. The premise of this approach is that language is compositional and word-meaning can be defined by its context--The meaning of a word is represented by the word and the words surrounding it \cite{Turney_2010}. The formulated word meaning representation is known as "word-embeddings" \cite{mikolov2013distributed}. Using language to define language proven good in inferential tasks such as inferring that "university" and "student" are close to each other given their common context of "education". 
+ 
+ 
+Representing meaning with a combined linguistic and visual representation is a second example of a field that is extensively researched. Early research in combining vision and language used probabilistic learning by aiming at drawing an alignment between sentences, phrases, and words with the corresponding perceptual representations.\cite{790410}. An approach  to probabilistic learning estimates the probability of a grammatical entity(text) being related to a perceptual representation \cite{6751319}. A second probabilistic method is by classifying each word in a sentence through probability distribution of words over a perceptual representation. In \cite{matuszek2012joint} \cite{larsson2015formal} we see examples of connecting entities of formal semantics(First Order Logic) with perception. 
+
+There are examples of research that attempt to incorporate knowledge graphs in the the representation of meaning. Examples, \cite{zhu2015building}, \cite{zhu2014reasoning}
+
+%Despite the variety of methods in forming meaning, the comprehension of a full meaning cannot be formed in exclusion of any of its aspects. Even abstract concepts can sometimes have a physical/visual representation such as Art. Art works cannot be understood if we do not perceptually perceive them and connect them to some mental notion of knowledge. In order to achieve such high cognition abilities in robots, scientist and researchers are continuously introducing finding new methods and approaches to improve the computer's abilities.  
+
+%In  robots, a full comprehension of meaning is essential for its usability. 
+%the ability to understand the visual aspect of meaning is essential for the robot's ability to interact and preform action. 
+
+%A paragraph about neural language models for vision and language (intro for image captioning)
+
+
+
+
+
+
+%\cite{dunning1993} introduced a well-known method for extracting
+%collocations. Bilingual data can be used to train part-of-speech
+%taggers \citep{das2011}. Another one: \citep{cortes2014}
+
+%Testing Unicode: Göteborgs universitet
+
+%\textit{Testing} \textbf{testing} \textsc{testing} some font series.
+
+%Testing a formula:
+%\[
+%P(X) = \sum_{i=1}^N P(A_i) P(X|A_i)
+%\]
+
+%Testing a table:
+%\begin{table}[htbp]
+%\begin{center}
+%\begin{tabular}{c|c}
+%cell 1 & cell 2 \\
+%\hline
+%cell 3 & cell 4
+%\end{tabular}
+%\caption{This is a table.}
+%\end{center}
+%\end{table}
+
+
+
+\newpage
+
+\section{background}
+\label{sec:background}
+\input{latex/background}
+
+\newpage
+
+\section{Methods and materials}
+\label{sec:methods}
+\input{latex/methods.tex}
+
+\newpage
+
+\section{Task One- Question Generation}
+\label{sec:task1}
+\input{latex/task1}
+
+
+\section{Task Two- Question Asking}
+\label{sec:task2}
+\input{latex/task2}
+
+
+\addcontentsline{toc}{section}{References}
+\bibliography{references}
+
+\newpage
+\section{Appendices}
+
+
+\subsection{datasets} 
+
+The 3D Scenes and the QA dataset mentioned in \cite{embodiedqa}, are called SUNCG(3D houses) and "EQA V1" (QA). The EQA V1 is a synthetic dataset generated automatically, and constructed based on the setting of the 3D houses in SUNCG. SUNCG is no longer available. \cite{embodiedqa} changed the SUNCG 3D setting to MatterPort 3D (MP3D). MatterPort 3D is a reconstruction of 3D houses in (SUNCG) scene dataset. The latter also implies that the inital "EQA V1" is not applicable for MP3D. 
+
+The new QA dataset for Matterport 3D is available but not the code that generated it. The EQA-mp3d v1 is also a synthetic dataset generated automatically and can be found at this footnote reference \footnote{https://github.com/facebookresearch/habitat-lab}. For generating  questions for SUNCG, a code published at this reference\footnote{https://github.com/facebookresearch/EmbodiedQA}. However, there is no code for generating QA for MP3D. 
+ 
+A few of the differences between the question dataset for SUNCG (EQA-SUNCG) and MP3D(EQA-MP3d) are mentioned in \cite{eqa_matterport}. However, not in all the information in  \cite{eqa_matterport} seems to match with EQA-MP3D that we have. In  \cite{eqa_matterport} page(4) it's stated that the number of scene used from MP3D is 76. The dataset we downloaded from "facebookai/habitat" repo on github uses a total 67 scene of 90 scenes available in MatterPort3D. 57 of the 67 scenes are used for questions in the train-set and 10 in the the enviroment. Note that the latter implies that the robot is tested on different scenes from the scenes it has been trained in. 
+
+\end{document}
+
+
