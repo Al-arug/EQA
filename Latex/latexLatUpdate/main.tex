@@ -35,10 +35,10 @@ Master's Thesis: & 30 credits \\
 Programme: & Master’s Programme in Language Technology\\
 Level: & Advanced level \\
 Semester and year: & Spring, 2020\\
-Supervisor & ()\\
-Examiner & ()\\
+Supervisor & (Simon Dobnik, Nikolai llinykh)\\
+Examiner & (Staffan Larsson)\\
 Report number & (number will be provided by the administrators) \\
-Keywords & (Artificial Intelligence,  Natural Language Processing, Computer Vision,\\ Visual Question Answering, Synthetic Data-sets  ) 
+Keywords & (Artificial Intelligence,  Natural Language Processing,\\ Computer Vision, \ \ Visual Question Answering, Synthetic Data-sets  ) 
 \end{tabular}
 \endgroup
 
@@ -102,7 +102,7 @@ The full meaning is the perceptual representation and the knowledge about it. Th
 
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.4]{images/symbolsyststem.png}
+\includegraphics[scale=0.5]{images/symbolsyststem.png}
 \caption{\cite{roy2005semiotic}}
 \label{fig:roy}
 \end{figure}.
@@ -174,18 +174,18 @@ There are examples of research that attempt to incorporate knowledge graphs in t
 
 \newpage
 
-\section{Methods and materials}
+\section{Methods and materials (proof reading required)}
 \label{sec:methods}
 \input{latex/methods.tex}
 
 \newpage
 
-\section{Task One- Question Generation}
+\section{Task One- Question Generation (Final review required)}
 \label{sec:task1}
 \input{latex/task1}
 
 
-\section{Task Two- Question Asking}
+\section{Task Two- Question Asking (Text to be added)}
 \label{sec:task2}
 \input{latex/task2}
 
@@ -204,6 +204,20 @@ The 3D Scenes and the QA dataset mentioned in \cite{embodiedqa}, are called SUNC
 The new QA dataset for Matterport 3D is available but not the code that generated it. The EQA-mp3d v1 is also a synthetic dataset generated automatically and can be found at this footnote reference \footnote{https://github.com/facebookresearch/habitat-lab}. For generating  questions for SUNCG, a code published at this reference\footnote{https://github.com/facebookresearch/EmbodiedQA}. However, there is no code for generating QA for MP3D. 
  
 A few of the differences between the question dataset for SUNCG (EQA-SUNCG) and MP3D(EQA-MP3d) are mentioned in \cite{eqa_matterport}. However, not in all the information in  \cite{eqa_matterport} seems to match with EQA-MP3D that we have. In  \cite{eqa_matterport} page(4) it's stated that the number of scene used from MP3D is 76. The dataset we downloaded from "facebookai/habitat" repo on github uses a total 67 scene of 90 scenes available in MatterPort3D. 57 of the 67 scenes are used for questions in the train-set and 10 in the the enviroment. Note that the latter implies that the robot is tested on different scenes from the scenes it has been trained in. 
+
+
+\subsubsection{List of textual references with number of answer choices}
+
+. 
+\begin{figure}[H]
+    \centering
+    \subfloat[\centering ]{{\includegraphics[width=6cm]{latex/images/plot1.png}}}%
+    %\qquad
+    \subfloat[\centering ]{{\includegraphics[width=6cm] {latex/images/plot2.png}}}%
+    \caption{Each row is a textual reference. The number of answer choices for each textual reference is represented by the colorful blocks. One block = 1 answer choice and so on. The colors of the bars are not representative of the named color answer so they should be disragarded}
+    \label{fig:textref}
+\end{figure}.
+
 
 \end{document}
 

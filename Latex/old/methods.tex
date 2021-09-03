@@ -7,26 +7,13 @@ The perquisites needed to test or train an agent for a certain task in a given e
 The configurations are processed into commands in Habitat-lab before being passed to the simulator. Habitat lab is the second core component of the system. In addition to giving commands to the simulator, the Habitat Lab module acts as a pipeline that prepares the data-set of the corresponding task. The habitat-lab module,in other words, is the coordinator that informs the simulator of the required setting, and the data loader and processor that prepares the data for either training or testing. 
 
 \begin{figure}[H]
+\centering
 \includegraphics[scale=0.43]{images/configProcess.png}
+\caption{Example of Habitat lab processing the configurations to implement validation for the VQA model }
 \label{fig:configs}
 \end{figure}
 
-Figure(x) resembles a map of the code structure when the habitat lab module is initiated to preform a task. Each task has its own configurations and in this example the task is 'VQA evaluation'. As seen in the figure \ref{configs}, the module takes hierarchical steps in which each step is executed in accordance to the configuration of the given task. In the most down box of the structure we see parts of the commands directed for the simulator, such as insinuating an environment and sensors in the agent. Other commands include registering a data-set which takes part in lab module. 
-
-
-Embodied question-answering is part of the tasks included within the Habitat platform. The EQA task consist of two sub tasks. The first is navigation, and the second is Visual Question-Answering. The main idea of the task is that agent needs to successfully navigate to the target object. Once the agent reaches the goal it would stop at the target location and would process the question and the visual input to answer the question. 
-
-
-However, there is no available connected model that connects(Nav,VQA). The researches elaborate that the system preform poorly if the two modules put to work together and trained in reinforcement learning. Setting up the task in such a connected manner lead to distorted images and inaccurate view point of the object in question if the robots drifts off the path during navigation. "Noisy or absent views"  would confuse the question-answering model.
-
-The current configuration for the EQA task separates the training for navigation and VQA. Imitation learning is used for navigation, and supervised learning for question-answering. the navigation is frozen when once it completes a navigational episode and is evaluated based on its steps following the shortest path to the objective. VQA model is evaluated based on the answers predicted.  
-
-'shortest path' is used in the training sitting of both, the navigation and VQA. 'Shortest path' is a navigational path consisting of the shortest steps to take to reach a view point of where the object in question is located. With each question-answer in the EQA data-set we find one shortest path. Shortest paths are made by human workers. For navigation the system is trained on following the steps of the shortest path. For VQA the shortest path is used to capture the scene from the viewpoint at the end of the path.  
-
-However, the navigation might go off the shortest path and seek to take more actions to reach the goal. This might lead to distorted images and inaccurate view point of the object in question. "Noisy or absent views"  would confuse the question-answering model.
-
-The vision-language modalities are fine-tuned differently for navigation and QA. Navigation and VQA employ the vision and language modalities provided in the platform. However, each one of them use the two modalities with different configurations, such as the number of decoders for vision and  the times that the language encoder is used.  
-
+Figure \ref{fig:configs} resembles a map of the code structure when the habitat lab module is initiated to preform validation task for the VQA. Each task has its own configurations and in this example the task is 'VQA evaluation'. As seen in the figure \ref{fig:configs}, the module takes hierarchical steps in which each step is executed in accordance to the configuration of the given task. In the most down box of the structure we see parts of the commands directed for the simulator, such as insinuating an environment and sensors in the agent. Other commands include registering a data-set which takes part in lab module. 
 
 \subsection{vision}
 
@@ -41,9 +28,6 @@ In the baseline models, different tasks take different sensors.Not all the above
 {VQA}: The existent baseline VQA model uses the visual information with "RGB" data only. (No reason mentioned to why the other sensors are not used in the question-answering baseline module).  
 
 
-\subsection{language model}
-
-The language models is a 2-layer LSTM with 128d hidden layers. The language model's role is to encode the questions and produce a representation. The language-encoder is trained differently for the navigation and VQA. The encoder learns to focus on different strings for each task. Some words in the question can be crucial for executing one of the tasks while less useful for the other task. An example of a question, cited from the EQA paper, " ‘What color is the chair in the kitchen?’, ‘color’ is irrelevant for navigation and ‘kitchen’ matters little for question answering (once in the kitchen) "
 
 %Hence- current hidden-state h_{t} and the current action are only %updated in the planner: 
 %
@@ -60,38 +44,33 @@ The language models is a 2-layer LSTM with 128d hidden layers. The language mode
 
  Our method of generating questions is largely related to the structure of the data-sets in the initial EQA paper\cite{embodiedqa}. Understanding each part of the data-sets and their structure would give an insight into the work flow of generating questions to the task. In this section we elaborate on the source of the data-sets, their content, and our methods in processing the data. 
  
-The data-sets consist of two parts. One is a 3D indoor enviroments, and the other is a question-answering data-set. The 3D enviroments are constructed images that assimilate real indoor enviroments. The 3D Scenes and the QA dataset mentioned in \cite{embodiedqa}, are called SUNCG(3D houses) and "EQA V1" (QA). The EQA V1 is a synthetic dataset generated automatically, and constructed based on the setting of the 3D houses in SUNCG. 
 
-SUNCG is no longer available. \cite{embodiedqa} changed the SUNCG 3D setting to MatterPort 3D (MP3D). MatterPort 3D is a reconstruction of 3D houses in (SUNCG) scene dataset. The latter also implies that the inital "EQA V1" is not applicable for MP3D. 
+\subsubsection{Semantic annotations in Matterport}
 
-The new QA dataset for Matterport 3D is available but not the code that generated it. The EQA-mp3d v1 is also a synthetic dataset generated automatically and can be found at this footnote reference \footnote{https://github.com/facebookresearch/habitat-lab}. For generating  questions for SUNCG, a code published at this reference\footnote{https://github.com/facebookresearch/EmbodiedQA}. However, there is no code for generating QA for MP3D. 
- 
-A few of the differences between the question dataset for SUNCG (EQA-SUNCG) and MP3D(EQA-MP3d) are mentioned in \cite{eqa_matterport}. However, not in all the information in  \cite{eqa_matterport} seems to match with EQA-MP3D that we have. In  \cite{eqa_matterport} page(4) it's stated that the number of scene used from MP3D is 76. The dataset we downloaded from "facebookai/habitat" repo on github uses a total 67 scene of 90 scenes available in MatterPort3D. 57 of the 67 scenes are used for questions in the train-set and 10 in the the enviroment. Note that the latter implies that the robot is tested on different scenes from the scenes it has been trained in. 
+%(restructuring is required-- more precision) (examples to rephrase-- why do we need the %location in global coordinates and why the camera views are also important)
+\paragraph{Annotations}
+In the Matter port annotations, Each house environment comes with three files. The three files are x.house,x.ply and x.. We collect the annotations from the x.house files house. 
 
-We refer to each question-sample in the EQA data-set as an "Episode". Each question is an episode, because the sample contains also, on the topic of the question-info, geometric information and shortest paths. Each episode is applicable for navigation and VQA, and can be run for each task separately. 
+Each house file comes with eleven line-types of annotations.\footnotetext{https://github.com/niessner/Matterport/blob/master/data\_organization.md}. The lines are marked by a capital letter as a marker; the first letter-marking to the last letter are as in this list [H,L,R,P,S,V,P,I,C,O,V]. Each letter-marker symbolizes a certain type of information. In this section, I am going to explain only the type of information that we use in this project.
 
-The EQA-v1 dataset consists of 1950 validation sets and 11000 training questions.
+The only data we extract from the house file, is the "O". The "O" lines contain information about the objects in the house. Every line that begin with an O letter consist of one object in the house with a corresponding information about its geometry and location within a room and level-floor. Each "O" line looks as such: [ O object\_index region\_index category\_index px py pz  a0x a0y a0z  a1x a1y a1z  r0 r1 r2 0 0 0 0 0 0 0 0 ] 
 
-\subsubsection{Scene Data-set and semantic annotations}
+The data of the object in the line seen above comes in a string form, and each section in the string represents different types of information. \textit{Object\_index}, the index of an object is what we refer to as the object ID. \textit{region index} is the room ID. \textit{category\_index} is the object's index in category map; this index is used to obtain the object's name from the category map.\textit{px py pz} represent the center of the box in (x,y,z) axis. \textit{a0x a0y a0z  a1x a1y a1z} these are the rotation of the OOBB and AABB. \textit{r0 r1 r2} represent the radius of the object from the center on the (x,y,z). Finally the last "0"s in the line have no meaningful value, and therefore are ignored. 
 
+\paragraph{Views of the geometric data}
 
-
-(restructuring is required-- more precision) (examples to rephrase-- why do we need the location in global coordinates and why the camera views are also important)
-
-The MP3D dataset provide 90 segmented houses with their semantic annotation. The semantic annotation is segmented based on the structure of the house. The segments consists of house levels(floors), to regions(rooms), and objects. The annotation is organized accordingly, such as that an object is annotated and indexed in relation to room and the floor its located in. 
-
-For example, the annotation of a house begins with the first level in it, followed by the rooms and objects in each room as: house 1 [{level1:room1[bedroom]:(obj1:bed,obj2:..),room2:(obj..)},, {level2:......} ]  
-
-Each semantic annotation include geometric information. The geometric information consist of elements as location of an object, region or level, defined by their center in a world coordinate system. Other information is the size of the entity given its radius from its starting location (center).   
+ The geometric information consist of elements as location of an object, region or level, defined by their center in a world coordinate system, as seen in the previouse section. Other information is the size of the entity given its radius from its starting location (center).   
 
 The camera views of the scenes are globally oriented \cite{Matterport3D}(p3). A way to allocate an object is to find its location in a accordance to global coordinates. Let's say the global coordinates start from the center of a house where the center of the house is (0,0,0) on the (x,y,z); and let's say all the objects are spawned through out the house's (x,y,z) axis where each objects location is defined by its distance to the house center. When annotated, the objects are viewed through a camera. The description of their geometric location, thus, should consider the view-postion of the camera. 
 
 \begin{figure}[H]
+\centering
 \includegraphics[scale=0.53]{images/campos.png}
-\label{campos}
+\caption{The camera in graph A views the objects from global perspective(readers perspective). The view of the camera in graph B is rotated. The rotation is resembled in the the axis's representation }
+\label{fig:campos}
 \end{figure}
 
-In graph (A) in \ref{campos}, we see that the camera-view of coordinates align with the global coordinates.The (x,y,z) that go through each object in graph(A) and graph (B) are the view of the axis in reference to the camera. However, if the camera is positioned to the right of the object from our view, as in graph (B), then we say that the camera view of coordinates is not aligned with the global view. We notice in graph (B) that from the camera view, the "global X" is "Y" and vice versa.
+In graph (A) in \ref{fig:campos}, we see that the camera-view of coordinates align with the global coordinates.The (x,y,z) that go through each object in graph(A) and graph (B) are the view of the axis in reference to the camera. However, if the camera is positioned to the right of the object from our view, as in graph (B), then we say that the camera view of coordinates is not aligned with the global view. We notice in graph (B) that from the camera view, the "global X" is "Y" and vice versa.
 
 Some geometric calculations cannot be preformed if the location measurements are not relative to each other. For example, if we want to calculate the distance between objects the locations must be consistent with one reference point. The camera position is changing and if the location of an object is referenced by the camera's position then we would get locations relative to the changing position of the camera in a time-span. 
 
@@ -107,15 +86,17 @@ The center of all these views is (0,0,0). We described above that the world coor
 
 MatterPort 3D provide the views decribed above. We discuss in more detailed the usage of the object's location in global coordinates and the local view in details in the implementation part.  
 
-\paragraph{Processing geometric data- Methods}
+\paragraph{Processing geometric data}
 
 \begin{figure}[H]
+\centering
 \includegraphics[scale=0.5]{images/A-OB.png}
-\label{}
+\caption{2D AABB represented in blue square with its axis aligning with the world view of axis. 2D OOBB represented in red square has its axis rotated from the global view }
+\label{fig:A-OB}
 \end{figure}
 
 
-The geometric information can be classified into two main categories. In a 3D environment we can imagine each object having  a labelling box rotated and oriented around its shape, and other box that bounds the first box with the global coordinates. In figure(X) we see a demonstration of the two boxes in 2d squares. The red box, that is meant to surround an object, is referred to as 'Object Oriented Bounding Box' (OOBB). The coordinates of the OOBB are rotated with rotation of the object (rotated in accordance to the local view). The blue box is referred to as 'Axis Aligned Bounding box'(AABB). The axis of AABB are aligned with global coordinates. 
+The geometric information can be classified into two main categories. In a 3D environment we can imagine each object having  a labelling box rotated and oriented around its shape, and other box that bounds the first box with the global coordinates. In figure \ref{A-OB} we see a demonstration of the two boxes in 2d squares. The red box, that is meant to surround an object, is referred to as 'Object Oriented Bounding Box' (OOBB). The coordinates of the OOBB are rotated with rotation of the object (rotated in accordance to the local view). The blue box is referred to as 'Axis Aligned Bounding box'(AABB). The axis of AABB are aligned with global coordinates. 
 
 We extract and save one specific information type of each box. The feature we take is the "radii", or else can be referred to as half-extents. The half-extents (radius) can be helpful in representing the object in different ways.  
 
@@ -136,59 +117,19 @@ The corners of the OOBB would be the most precise representation of the corners 
 
 \subsubsection{EQA (Task Dataset)}
 
-(More information to include-- 1. How they filter out questions based on entropy, and how they filter out objects based on size..2.How many unique question there is. 3. Explain more thoroughly how the singleton(object,room) works) 
-
-The question-answer data-set contains three types of questions.
-Each question in the detest is a function that can be executed in the environment to give an answer. More in section (3.2)
-\begin{figure}[H]
-
-\includegraphics[scale=0.45]{images/Train.png}
-\includegraphics[scale=0.45]{images/Val-set.png}
-\end{figure}
-
-%\begin{figure}
-%\includegraphics[scale=0.45]{images/Val-set.png}
-%\end{figure}
-
-
-(To include the number of unique questions here )
-There is a total 11496 questions in the train split and 1950 questions in the val split. As seen in figure (5),in the train split there are 1830 questions "color" type, 8031 of "color room"  and "1635" of location type. For the validation split there are 1335 "color room" questions, 345 "color" questions, and 270 "location" questions. 
-
-
-
-Each question-type is generated in a string template.The templates are as the following:
-
-\textbf{- color room} template: "what color is <obj> in  <room>?": In these questions the agent needs to find the room in question and look for the object and answer the question. For the agent's to be successful at reaching its target, it needs to know the difference between rooms, and objects, as by implicitly recognizing that a certain room is a living-room, not a bathroom and such.  
-
-\textbf{- color} template: "what color is <obj>". The difference between "color" type and "color room" is that no room is specified in the "color" type of question. In "color" type the agent needs to figure out where to look by itself. For example, "what color is the fridge?", the robot needs to implicitly figure that the fridges are usually in the kitchen and navigate to the kitchen to answer the question. In other cases, the object could be in the vicinity of the robot's starting point, so that it all it needs to do is to look around. 
-
-\textbf{- location} template: "What <room> is the <obj> located in". 
-
-\paragraph{Querable objects and rooms}
-
-The questions ask about 50 unique objects. \cite{embodiedqa} in (page 4) describe the process of object and room selection for question generation.The following quoted from (page 4): 
-
-"select(objects)->singleton(objects)->query(location)"
-
-The above represents the steps taken for finding object and location to fill in the questions template. select(objects) is a function that collects all the objects in the house. singleton(objects), filter out an object that occurs only once in the house; query(location) finds the location of the object.However, this applies to the old dataset in SUNCG.
-
-In EQA-MP3D, the object in question is not unique to the house but to the room. The latter means that for an object to be selected for a question, there need to be only one instance of that object existent in the room. The reason for this is to avoid ambiguity, and not to confuse the agent if there happen to be more instances of the same object in the room. 
-
-we observe that all the objects that the robot is asked about in testing have occurred in the training questions. While it has been mentioned earlier that the robot is tested in different scenes from the scenes it was trained on, similar objects from the training co-occur in the testing. The latter means, in particular, that the robot is unfamiliar to the test scenes but familiar with all the objects that are being asked about in the test. This information is also stated in \cite{eqa_matterport}. 
-
+Our method for generating questions relies on imitating the structure of teh EQA-mp3d data-set. In this section we give a review of the EQA-mp3d structure and attributes.   
 
 \paragraph{Structure}
 
 \begin{figure}[H]
+\centering
 \includegraphics[scale=0.5]{images/episode1.png}
-\label{fig:episode}
-\caption{}
 \includegraphics[scale=0.5]{images/datasplit1.png}
-\label{fig:datasplit}
+\label{fig:episode}
 \caption{}
 \end{figure}
 
-In figure (x) we see the top structure of the val and test. \textit{Episodes} refer to each question-function in the data-set split. \textit{Question vocab} and \textit{answer vocab} contain the same elements as dictionary keys. The elements are: [word list,stoi,itos,num vocab,pad token].
+In figure \ref{fig:episode} we see the top structure of the val and test. \textit{Episodes} refer to each question-function in the data-set split. \textit{Question vocab} and \textit{answer vocab} contain the same elements as dictionary keys. The elements are: [word list,stoi,itos,num vocab,pad token].
 
 "Question vocab" and "answer vocab" in the "train" and "val" are identical to each other. When using each split of the dataset, the answer-tokens that are considered are the ones contained within the episodes instead of the word-lists mentioned above. 
 
@@ -228,9 +169,7 @@ The elements that are marked in blue in figure(x) are navigation-related materia
 
 
 
-\paragraph{expirement}
 
 
-The idea is to extend the question asked for the agent. The two types of questions are size and spatial. The process of question extension includes using information from the initial EQA-v1  dataset, which consists of color, color-room, and location questions. Each question sample has a target object with corresponded information as object ID, room ID, Scene ID, question(token-ids and text), and shortest path. We pick the object and the room ID for every question sample to extract the rest of the information about the other things in the room. The extracted information is the volumes of the objects and the 
 
 

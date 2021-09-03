@@ -17,22 +17,18 @@ In the existing generated question-answers data-set we use the data extracted fr
 The second major component - get close distances 
 
 
-\subsubsection{Class_1 Method 1 - Annotations from MP3D files}
-
-In the Matter port annotations, Each house environment comes with three files. The three files are x.house,x.ply and x.. We collect the annotations from the x.house files house. 
-
-Each house file comes with eleven line-types of annotations.\footnotetext{https://github.com/niessner/Matterport/blob/master/data\_organization.md}. The lines are marked by a capital letter as a marker; the first letter-marking to the last letter are as in this list [H,L,R,P,S,V,P,I,C,O,V]. Each letter-marker symbolizes a certain type of information. In this section, I am going to explain only the type of information that we use in this project.
-
-The only data we extract from the house file, is the "O". The "O" lines contain information about the objects in the house. Every line that begin with an O letter consist of one object in the house with a corresponding information about its geometry and location within a room and level-floor. Each "O" line looks as such: [ O object\_index region\_index category\_index px py pz  a0x a0y a0z  a1x a1y a1z  r0 r1 r2 0 0 0 0 0 0 0 0 ] 
-
-The data of the object in the line seen above comes in a string form, and each section in the string represents different types of information. \textit{Object\_index}, the index of an object is what we refer to as the object ID. \textit{region index} is the room ID. \textit{category\_index} is the object's index in category map; this index is used to obtain the object's name from the category map.\textit{px py pz} represent the center of the box in (x,y,z) axis. \textit{a0x a0y a0z  a1x a1y a1z} these are the rotation of the OOBB and AABB. \textit{r0 r1 r2} represent the radius of the object from the center on the (x,y,z). Finally the last "0"s in the line have no meaningful value, and therefore are ignored. 
-
-We extract two types of raw information from each object's line of annotation. First we take the obj and room indexes (ids). Second is the [px py pz] and where we categorize it as the center of the object's box. Third is the [r0 r1 r2] (radius-half-extent).
+\subsubsection{Annotations from MP3D files}
 
 
-\subsubsection{Class 1 Method 2 - Annotations from Habitat's sensors}
+We extract two types of raw information from each object's line of annotation found in the house files in Matter-port. Lines mentioned erlier: [px py pz  a0x a0y a0z  a1x a1y a1z  r0 r1 r2 0 0 0 0 0 0 0 0 ] 
 
-Our final choice for extracting semantic annotations is Habitat's simulator. Our annotation's parser of the houses uses the sensors with configuration provided by the habitat platform \footnote{https://aihabitat.org/docs/habitat-lab/habitat-sim-demo.html#scene-semantic-annotations}. The configurations include the settings such as the scene, the height and width of the sensors, and the types of sensors to include. color sensor, semantic sensor and depth sensors are used. 
+First we take the obj and room indexes (ids). Second is the [px py pz] and where we categorize it as the center of the object's box. Third is the [r0 r1 r2] (radius-half-extent).
+
+we structure the data in a form that the annotation of a house begins with the first level in it, followed by the rooms and objects in each room as: house 1 [{level1:room1[bedroom]:(obj1:bed,obj2:..),room2:(obj..)},, {level2:......} ]  
+
+\subsubsection{Annotation extraction using from Habitat's sensors}
+
+Our final choice for extracting semantic annotations is Habitat's simulator. Our annotation's parser of the houses uses the sensors with configuration provided by the habitat platform \footnote{url{https://aihabitat.org/docs/habitat-lab/habitat-sim-demo.html#scene-semantic-annotations}.}. The configurations include the settings such as the scene, the height and width of the sensors, and the types of sensors to include. color sensor, semantic sensor and depth sensors are used. 
 
 Once we simulate the environment, the sensors output the annotations of a house(scene) as an object. We iterate through the object to obtain information about the levels, rooms, and the objects in the rooms. We freeze the simulator once the annotations' object of one environment is outputted, then repeat the process for the other environments. 
 
@@ -40,6 +36,7 @@ The data about the an environment's annotations include a calculated geometric i
 
 
 \begin{figure}[H]
+\centering
 \includegraphics[scale=0.5]{images/Geoinfo.png}
 \caption{Min and Max of an Axis Orients bounding box}
 \label{fig:aabb}
@@ -75,6 +72,7 @@ The main functionality of this class is to find a spatial relation between pairs
 It outputs three types of spatial relations between a pair of objects. The pairs spatial relation is specified by whether an object is 'on' , 'next' or in unspecified 'close' distance to a second object. The pairs are organized in a dictionary, one key for each spatial relation. This information is used for generating positive spatial questions. 
 
 The spatial relations mentioned above are measured by calculating the distance between the corners of the objects' bounding boxes along certain dimensions. The corners obtained using the 'min' and 'max'. If we iterate over the Min(x,y,z) and Max(x,y,z) we get the other six corners of the box. Figure \ref{fig:box_points} illustrates the eight corners, the view point of the cube is rotated to the right for the sake of viewing all the points in the cube. If we move our point of view directly in front of the cube as if  we are facing the square GHED,  the points A and H would seem to be lying on a straight line. Lying on the same straight line, for example, means the point A and H are located on the same points in the x-axis, and so one for the other parallel points .\begin{figure}[H]
+\centering
 \includegraphics{images/cornerPoints.png} %[scale=0.5]
 \caption{}
 \label{fig:box_points}
@@ -141,6 +139,7 @@ The final step is deciding which object is on the top of the other. The pair of 
 
 
 \begin{figure}[H]
+\centering
 \includegraphics[scale=0.5]{images/Nextview.png}
 \caption{}
 \label{fig:next}
@@ -164,6 +163,7 @@ A pair close to each other are a pair who has any of their 3D corners close to e
 
 
 \begin{figure}[H]
+\centering
 \includegraphics[scale=0.5]{images/generator.png}
 \caption{Split generator}
 \label{fig:generator}
@@ -213,8 +213,8 @@ The size answer is generated in a function referred to as "GetsizeAnswer". This 
 
 The relative size is determined by its deviation from the standard of its type. As mentioned earlier the sizes of all objects are stored by type in a file. We pick the volumes of the object's type and calculate the mean size and the standard deviation of all the the sizes from the mean. The standard deviation denoted below: 
 
-\begin{math} s = \sqrt{\frac{1}{N-1} \sum_{i=1}^N (x_i - \overline{x})^2} 
-\end{math}
+\[ s = \sqrt{\frac{1}{N-1} \sum_{i=1}^N (x_i - \overline{x})^2} 
+\]
 
 The answer is 'small' if the objects' size is smaller the mean size of its type minus the standard deviation,  'big' if the size is larger the median + the standard deviation, and middle if the size of the object is within the standard deviation added and subtracted from median. 
 
@@ -227,8 +227,8 @@ The question string generator takes a question type, and an object as an argumen
 
 The templates for size questions are as the following: 
 
-size\_obj : 'how big {AUX} the {OBJ} ? \\
-size\_room:'how big \qdist{AUX}  the \qdist{OBJ} in the \qdist{ROOM}?'
+size\_obj : 'how big <AUX> the <OBJ> ? \\
+size\_room:'how big <AUX>  the <OBJ> in the <ROOM>?'
 
 \subsubsection{spatial-questions}
 
@@ -265,12 +265,12 @@ The last part in blue is conditioned by the type of answer, if it's 'yes' or 'no
 
 To generate a spatial question string, the string generator takes as an argument the question type such as "spatial\_room" and and spatial relation type such as "on", "next" or "close". The string templates are the following: 
 
-'\qdist{ AUX} there \qdist{ARTICLE} \qdist{OBJ1} close to the \qdist{OBJ} in the \qdist{ROOM}?'\\
-'\qdist{AUX} there \qdist{ARTICLE}  \qdist{OBJ1} next to the \qdist{OBJ} in the \qdist{ROOM}?' \\
-'\qdist{AUX}  there \qdist{ARTICLE} \qdist{OBJ1} on the \qdist{OBJ} in the \qdist{ROOM}?\\
-'\qdist{AUX} there \qdist{ARTICLE} \qdist{OBJ1} close to the \qdist{OBJ}?',\\
-'\qdist{AUX}  there \qdist{ARTICLE} \qdist{OBJ1} next to the \qdist{OBJ} ?',\\
-'\qdist{AUX}  there \qdist{ARTICLE} \qdist{OBJ1} on the \qdist{OBJ}?'
+'<AUX> there <ARTICLE> <OBJ1> close to the <OBJ> in the <ROOM>?'/\\
+'<AUX> there <ARTICLE>  <OBJ1> next to the <OBJ> in the <ROOM>?' \\
+'<AUX>  there <ARTICLE> <OBJ1> on the <OBJ> in the <ROOM>?\\
+'<AUX> there <ARTICLE> <OBJ1> close to the <OBJ>?',\\
+'<AUX>  there <ARTICLE> <OBJ1> next to the <OBJ> ?',\\
+'<AUX>  there <ARTICLE> <OBJ1> on the <OBJ>?'
 
 
 \subsection{Results}
@@ -280,6 +280,7 @@ To generate a spatial question string, the string generator takes as an argument
 \begin{figure}[H]
 \includegraphics[scale=0.25]{images/GenTrain.png}
 \includegraphics[scale=0.25]{images/GenVal.png}
+\caption{}
 \label{fig:questionGen}
 \end{figure}
 

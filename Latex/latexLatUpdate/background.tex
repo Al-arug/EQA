@@ -74,7 +74,7 @@ Embodied Question Answering is a new interactive task presented as one of the ta
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.3]{images/Vision-language.png}
-\caption{EQA in relation to other multi-modalities}
+\caption{EQA in relation to other vision&language multi-modalities}
 \label{fig:multimodal}
 \end{figure}.
 
@@ -117,11 +117,19 @@ In each QA episode, the information used for training the VQA model is an ID for
 
 The extracted scenes for VQA consist of 5 frames images taken from the view point where the navigator is supposed to stop. In figure \ref{vqaconstruct} we see an illustration of the structuring of the VQA data-set using the EQA task data-set (EQA-MP3D) and the scenes in Matterport 3D. The resulted VQA for VQA training is a Quesiton-Answer pair with a visual scene. 
 
-\paragraph{Size of the data-set and Question types}
+\paragraph{Data-set size & Question types}
 
+The question-answer data-set contains three types of questions. Each question-type is generated in a string template.The templates are as the following:
 
+\textbf{- color\_room} template: "what color is <obj> in  <room>?": In these questions the agent needs to find the room in question and look for the object and answer the question. For the agent's to be successful at reaching its target, it needs to know the difference between rooms, and objects, as by implicitly recognizing that a certain room is a living-room, not a bathroom and such.  
 
-There is a total 11496 questions in the train split and 1950 questions in the val split. As seen in figure \ref{fig:questioncount},in the train split there are 1830 questions "color" type, 8031 of "color room"  and "1635" of location type. For the validation split there are 1335 "color room" questions, 345 "color" questions, and 270 "location" questions. 
+\textbf{- color} template: "what color is <obj>". The difference between "color" type and "color room" is that no room is specified in the "color" type of question. In "color" type the agent needs to figure out where to look by itself. For example, "what color is the fridge?", the robot needs to implicitly figure that the fridges are usually in the kitchen and navigate to the kitchen to answer the question. In other cases, the object could be in the vicinity of the robot's starting point, so that it all it needs to do is to look around. 
+
+\textbf{- location} template: "What <room> is the <obj> located in". 
+
+In EQA-MP3D, each object in a question is unique to the room. The latter means that for an object to be selected for a question, there need to be only one instance of that object existent in the room. The reason for this is to avoid ambiguity, and not to confuse the agent if there happen to be more instances of the same object in the room. 
+
+There is a total 11496 question-episodes in the train split and 1950 question-episodes in the val split. As seen in figure \ref{fig:questioncount},in the train split there are 1830 episodes of  "color" type, 8031 episodes of "color room"  and "1635" of location type. For the validation split there are 1335 "color room" questions, 345 "color" questions, and 270 "location" questions. 
 
 
 \begin{figure}[H]
@@ -132,17 +140,24 @@ There is a total 11496 questions in the train split and 1950 questions in the va
 \label{fig:questioncount}
 \end{figure}
 
-The question-answer data-set contains three types of questions. Each question-type is generated in a string template.The templates are as the following:
-
-\textbf{- color room} template: "what color is <obj> in  <room>?": In these questions the agent needs to find the room in question and look for the object and answer the question. For the agent's to be successful at reaching its target, it needs to know the difference between rooms, and objects, as by implicitly recognizing that a certain room is a living-room, not a bathroom and such.  
-
-\textbf{- color} template: "what color is <obj>". The difference between "color" type and "color room" is that no room is specified in the "color" type of question. In "color" type the agent needs to figure out where to look by itself. For example, "what color is the fridge?", the robot needs to implicitly figure that the fridges are usually in the kitchen and navigate to the kitchen to answer the question. In other cases, the object could be in the vicinity of the robot's starting point, so that it all it needs to do is to look around. 
-
-\textbf{- location} template: "What <room> is the <obj> located in". 
-
-In EQA-MP3D, each object in a question is unique to the room. The latter means that for an object to be selected for a question, there need to be only one instance of that object existent in the room. The reason for this is to avoid ambiguity, and not to confuse the agent if there happen to be more instances of the same object in the room. 
+The number of unique question-answers, however, is different from the number of episodes. A unique question-answer as a question-answer of the same strings and visual scene. For every unique question-answer and goal (scene) there is 15 different starting positions and shortest paths for the robot to train on for navigation. This means every unique QA in VQA is repeated 15 times. For example, in the validation set the number of unique questions (same QA and goal-scene) of "color" type  is 23, we multiply it with 15 (the number of starting positions for every unique goal) and we get 345, the number of episodes for "color" type in val-set as seen \ref{fig:questioncount}. In the train set, the number of unique visual-question-answer for "color\_room" is 536, for "color" is 122, for "location" is 109. In the val set, the number  of unique visual-question-answer for "color\_room" is 89, for "color" is 23, for "location" is 18. 
 
 
+\paragraph{Data Bias}
+
+In all color questions (color & color\_room) in the train set, we observe that there is a total of 153  unique textual references. A 'reference', in this example, is a string that can refer to specific entity in specific or non-specific space. For example, 'sofa' in questions like "what color is the sofa?" is one reference. "sofa in the living-room", like in color\_room questions "what color is the sofa in the living room?", is a second reference. "sofa in the bedroom" like "what color is the sofa in the bedroom?" would be a third and different reference. In order to gain insight into the data, we normalized all the color questions by reducing them into questions of a reference type, and collect the number of answer choices found for each reference type in all color questions.\footnote{ Link to the statistical analysis of the data in a notebook  \url{https://github.com/Al-arug/EQA}.} 
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{latex/images/AnswerRef.png}
+\caption{The color questions in the training data sorted by textual reference. In total we find in all color questions 153 references. 17.8 percent of the references have one color answer as the only choice.  }
+\label{fig:AnswerRef}
+\end{figure}.
+
+We find that 17.8 percent of the references have one color answer as the only choice of answer, as seen in figure \ref{fig:AnswerRef}. This means that 17.8 percent, 1755 of allthe  9861 "color" & "color\_room" QA episodes in the train-set, have one possible color as an answer. This means, in these cases the model does not train on disambiguating any classes of color for the reference in the question. These data sample would instead tell the model that there is only one possible answer to memorise for this reference. (Appendices contain all the textual references found in the question)
+
+Second type of bias is the dominance of one color over the other choices in the question-answers with multiple color choices. (visualization to be added)
 
 
 
@@ -189,6 +204,14 @@ The controller decides to either repeat the action or return control to the plan
 
 \subsubsection{VQA Model}
 
+
+
+The VQA model is a CNN-LSTM architecture.The CNN encodes a 224x224 RGB images with a “multi-task pixel-to-pixel prediction framework”(p6) encoding. The structure of the CNN4 {5x5 Conv, BatchNorm, ReLU, 2x2 Max-Pool blocks}, and they produce a fixed-size representation.“The range of depth values for every pixel lies in the range r0, 1s, and the segmentation is done over 191 classes”(p.11) \cite{embodiedqa} . The lstm is a 2-layer LSTM with 128d hidden layers
+
+
+
+
+
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.35]{latex/images/VQA.png}
@@ -196,84 +219,44 @@ The controller decides to either repeat the action or return control to the plan
 \label{fig:VQ}
 \end{figure}
 
-The vision of the system relies on egocentric 224x224 RGB images processed in CNN. The CNN encoding has the functionality of a “multi-task pixel-to-pixel prediction framework”(p6)  which consists of 4 {5x5 Conv, BatchNorm, ReLU, 2x2 Max-Pool blocks}, and they produce a fixed-size representation.“The range of depth values for every pixel lies in the range r0, 1s, and the segmentation is done over 191 classes”(p.11) \cite{embodiedqa}  
+
+
+The CNN extracts features from five images(5 frames) scene, and the LSTM encodes the textual features of the question. Combing the visual and linguistic features is done through computing similarity via dot product and concatenation. First the similarity between each image and the question features is computed via dot product. A soft max converts the question and image similarity into attention wights then the question encoding is concatenated with them. The concatenated features are then classified in a soft max, where the answer probability is distributed over 172 answers.(\cite{embodiedqa},p6)
 
 
 
+\subsection{Problem}
+
+In an experiment we conducted on the VQA model, we observed that the system tends to answer the questions relying mainly on the textual input in the questions (bias)\footnote{ Link to the experiment "Testing VQA's reliance on vision "  \url{https://github.com/Al-arug/Habitat-Project}.} The idea of the experiment was to give the model a random image instead of the original scene and see if it affects its predictions. The results showed that the system gave correct answers despite the absence of the corresponding scene required to answer the question. In such a case, the system's performance, would normally, have worsened not improved as the required visual information to answer the question is missing. The correct answering by the system was demonstrated in an overall increase in the performance score. Its ability to answer correctly demonstrates its reliance on the language model to predict the answer. 
+
+The system's ability to predict answers correctly in the experiment indicates lack of visual grounding. We draw this conclusion from the observation that vision had no influence on the predictions. This means that the system, in the training, has not learnt a scheme for word-meaning in association to vision. Grounding language in vision is when we connect the "high-level" symbolic representations such language to a "low-level" non-symbolic representation such as the sensory (visual) features. The ability to ground language in vision is important for any task requiring "seeing" and attending answer. If a robot successfully learns to align and combine the two types of representations, one could say that the computer understands what it sees (visual grounding). When a system fails to achieve such a connection, we define the problem as the  "Symbol system problem"(\cite{harnad1990symbol}) or 'lack of visual grounding' 
 
 
+We presume that the lack of visual grounding  is attributed to bias in the data-set. Earlier in this text we reviewed textual biases within the EQA data-set. Having biases in the data-set would hinder the learning process, as it gives the model a way to learn to avoid combining vision and language  by giving  correct answers without actually learning to combine the two types of data. 
+
+We also observe that the type of questions asked are simplistic and can be considered unnatural. The existent color questions in the data-set are not the type of questions that a human would naturally ask. The limited types of questions found in the data-set seems to be meant for simplifying the task on the robot with a main focus on navigation.
 
 
-\subsection{Problem- next In process}
+\subsection{Problem in a context}
 
+(\cite{selvaraju2020squinting},\cite {goyal2017making}) and other research within the VQA point out the problem where  models learn biases in training and manage to give good results in the testing.\cite{johnson2017clevr} elaborate that the underlying issue here is that the model answers by memorising prior textual information. For example, a neural network might answer the question “What covers the ground?” correctly by answering “snow”, “not because it understands the scene but because biased data-sets often ask questions about the ground when it is snow-covered.” \cite{fukui2016multimodal} clarify that the models' answer-cheating is demonstrated when a VQA system primarily relies on the language model , and ignores the visual information. Such a learning problem is crucial because it makes it challenging to evaluate the model’s improvements\cite{agrawal2018don}.
 
-
-In an experiment we conducted on the VQA model, we noticed that the system tends to answer questions relying mainly on the questions (bias). The question of the experiment is if the answer-prediction would change or still be correct if we ask the system about the color of the table in the living room and input a picture of a bathroom without a table in it. \ref{}
-
-The results showed an increase in the total accuracy of the prediction despite the absence of the required visual information.
- 
- Yasmeen expirement {............}
- 
- These results could indicate different things on the model and its data, but the least it could tell is that the system did not need to rely on the images to answer the questions correctly.
-
-
-The observation of the results opens question-marks on two major components. The first is on the VQA model, as by why it tends to neglect the visual information and rely mostly on linguistic features. The second is a question on the dataset and its contribution to answering the questions correctly. Nonetheless, if one assumes that the model's ineffectiveness stems from a model-data mismatch, how would the system perform if asked different types of questions than the existing ones. This speculation becomes more relevant given that evaluated questions consist predominantly of one question type, color.
-
-
-
-\subsection{Problem in a context- next in process}
-
-
-In a more concrete example, a reasoning process would "require models to perform inference at multiple levels of abstraction" \cite{selvaraju2020squinting}. for example, "is the banana ripe?" where it would instantly answer "no".  To answer this question, it would require the system to rely on perception to answer sub-questions such as where is the object? What are its shape, size, and color? Then reason that the "yellow" color indicates ripeness.
-
-
-A common problem in visual question answering is the over-weighting of linguistic over visual features in the answering. \cite{fukui2016multimodal}. Research has shown that models can superficially perform tasks without learning the underlying reasoning process \cite{turmsimple}. In visual question answering, it has been observed that a system cheats its way into answering the questions without taking the reasoning steps that humans would logically take to answer a question. \cite{agrawal2016analyzing},\cite{zhang2016yin}, \cite {fukui2016multimodal}.In particular, 
-
-In Such cases the system answers correctly by exploiting linguistic biases in the dataset, as it tends to rely primarily on the language model and ignore the visual information \cite {goyal2017making}
-
-model learns biases in training and manages to give good results in the testing \cite{selvaraju2020squinting}. The underlying issue here is that the model answers by memorising prior textual information. For example, a neural network might answer the question “What covers the ground?” correctly by answering “snow”, “not because it understands the scene but because biased datasets often ask questions about the ground when it is snow-covered.” \cite{johnson2017clevr}; This learning problem is crucial because it makes it challenging to evaluate the model’s improvements\cite{agrawal2018don}.
-
-
-However, color questions could get more complex as "people employ compositional color descriptions to express meanings not covered by basic terms, such as greenish-blue" \cite{monroe2016learning}. It would be shallow to assume that color questions are simplistic, especially if we expect the system to answer colors beyond the basic color terms like "green" and "red." 
-
+When a system cheats its way into answering the questions it shows lack of visual grounding\cite {goyal2017making}. Visual grounding (understanding the meaning of words in reference to vision)is important because we want the systems to understand the reasoning steps that humans would logically take to answer a question \cite{agrawal2016analyzing},\cite{zhang2016yin}, \cite {fukui2016multimodal}. For the systems to be able to reason its way to predict an answer it must first capture the full meaning. \cite{selvaraju2020squinting} explains that learning to reason would require the systems to make inferences at "multiple levels of abstraction". For example, "is the banana ripe?" where it would instantly answer "no".  To answer this question, it would require the system to rely on perception to answer sub-questions such as where is the object? What are its shape, size, and color? Then reason that the "yellow" color indicates ripeness.\cite{selvaraju2020squinting}
 
 \subsection{Research Questions}
+\begin{itemize}
 
 
+\item How can we extend the data-set with more sophisticated and natural questions ? (A useful robot should answer a variety of questions.)
 
-Research question: 
+Adding new questions could help test the system's capabilities, but more importantly, we consider it a step to enhance the system's cognition. The VQA system that we are improving is part of a robotic system that should ideally be helpful for human use. Social robot's usability is very dependent on its exhibition of human intelligence \cite{fong2003survey}.
 
-- How can we extend the data-set with more sophisticated and natural questions.
-- What is the bias formed by color questions. 
-- How does the VQA system preform with the new question type. 
-- Does asking size and spatial question improve the system's attention to vision.  
+\item How does the VQA system preform with the new question types ? 
 
-
-- overview how habitat is constructed 
-
-- Does asking more questions of size and spatial types improve the system's attention to vision?
-
-- How does the system preform when we ask more question types?
+\item Does asking questions of spatial and size types improve the system's attention to vision ? (Evaluating it based on the performance on color questions) 
 
 
-We have an evidence that the dataset is simplistic, and contains bias in color question. (cause of the problem). problem- lack of visual grounding. 
+\end{itemize}
 
-- How does the system preform when we ask more question types?
-- How does the 
+ 
 
-questions. (A usful robot should answer a variety of questions.)
-
-. To what extent does the system use  the visual information.
-
-. Does asking more questions of size and spatial types improve the system's reliance on vision, rather than language.
-
-. How would the navigation model preform with new questions. 
-
-
-. Does the inclusion of spatial questions improve the system's learning of computational answers- such as olive-green, dark -blue. 
-
-. Would a tranformer-based based attention model improve the the preformance of the vqa model. 
-
-Adding new questions could help test the system's capabilities, but more importantly, we consider it a step to enhance the system's cognition. The VQA system that we are improving is part of a robotic system that should ideally be helpful for human use. Social robot's usability is very dependent on its exhibition of human intelligence \cite{fong2003survey}. Hence that correct question-answer prediction does not necessarily indicate the system's ability to reason. 
-
-An example from the data presented in the Habitat project requires even fewer abstractions, "what color is the sofa?"; The system would only need to rely on perception answer itself "where is the object," then answer the color question.

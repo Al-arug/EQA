@@ -96,13 +96,15 @@ A visual representations of the corners and their values seen in figure.X
 
 The definition of each of the mentioned spatial relation , is an approximation of how we define them as humans. Each of the spatial relations are determined given a geometric criteria of distances and positions between objects' corners along the three axis  (x,y,z). 
 
-Two general operations are used in each of the relations. The first one is calculating  the Euclidean distance between two corner points; denoted as the distance between p and q in this formula:  \begin{math}
+Two general operations are used in each of the relations. The first one is calculating  the Euclidean distance between two corner points; denoted as the distance between p and q in this formula: 
+\[
  d\left( p,q\right)   = \sqrt {\sum _{i=1}^{n}  \left( q_{i}-p_{i}\right)^2 } 
- \end{math}
+\]
 
 The corners, depending on the type of relation we want to extract, can be represented as points in  1d, 2d, or 3d. 1D is  when we pick points from one of the axis only. 2D is a point on two axis, and 3D is a point on three axis as the corner examples illustrated earlier. We describe this in more detail in the sections below. The second operation is calculating if one of side of a box on a certain axis is contained within the other. 
 
 \begin{figure}[H]
+\centering
 \includegraphics[scale=0.5]{images/contained.png}
 \caption{}
 \label{fig:contained}
@@ -122,6 +124,7 @@ The operations above are done over different axis for every relation. Below we s
 First step is choosing pairs of objects that are closest to each other vertically(on the Z axis). The distance should be less than a 0.5 millimeter thresh hold. The Euclidean distance here is calculated between the 1D points on the Z axis only. Two corner values from each box and any corner match the distance required are picked out. 
 
 \begin{figure}[H]
+\centering
 \includegraphics[scale=0.7]{images/on.png}
 \caption{}
 \label{fig:on}
@@ -310,7 +313,7 @@ The majority of answers for the spatial questions are positive "yes" as seen in 
 
 The outcomes of generating size questions resulted with zero samples of "small" answer and a majority of 'medium' answer as seen in figure \ref{fig:AnsDist}. In the QA generator, we intended to limit the question-answers with "Medium" answer based on an observation of their dominance. However, limiting the 'medium' answers more than the presented numbers would have resulted in a very few question-answers of size type. An insignificant proportion of size questions was insufficient for training the model . We decided to keep the size questions with their imbalanced distribution, despite knowing that this linguistic bias might hinder the learning outcomes.  
 
-\subsubsection{Discussion}
+\subsubsection{Discussion - (To be competed)}
 
 Our question-answer generation is very dependent on the objects and the shortest paths found in EQA-V1 data-set. The geometric information such as  starting positions and shortest paths are required material for extracting scenes training and testing the VQA model. To be only dependent on the objects found in the EQA restricts our choice over the QA that we could generate. The most prominent limitation we see in the generated questions is the inability to control the answer distribution for size questions. None of the target object's found in EQA V1 turned to be of a small size, based on the criteria we establish for determining an object's size. 
 
