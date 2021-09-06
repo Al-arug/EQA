@@ -63,7 +63,7 @@ restricted visual Turing test to evaluate visual understanding. The DAQUAR datas
 \subsection{Embodied Question Answering}
 
 \begin{figure}[H]
-\includegraphics[scale=0.4]{latex/images/EmbodiedQuestionAnswering.png}
+\includegraphics[scale=0.4]{images/EmbodiedQuestionAnswering.png}
 \label{fig:EQA}
 \caption{The Robot is asked a question at a start position. It needs to look a round, collect information and decide on the next step to take. When it recognizes the car it stops and processes the scene to answer the question }
 \end{figure}. 
@@ -74,7 +74,7 @@ Embodied Question Answering is a new interactive task presented as one of the ta
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.3]{images/Vision-language.png}
-\caption{EQA in relation to other vision&language multi-modalities}
+\caption{EQA in relation to other vision\&language multi-modalities}
 \label{fig:multimodal}
 \end{figure}.
 
@@ -110,14 +110,14 @@ In each QA episode, the information used for training the VQA model is an ID for
 
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.5]{latex/images/VQAConstruct.png}
+\includegraphics[scale=0.5]{images/VQAConstruct.png}
 \caption{Locations of view points of the entity taken from an EQA episode to extract a visual scene. The visual scene is then constructed with a QA pair to form a VQA sample of 5 frames of images, question and ground truth }
 \label{fig:vqaconstruct}
 \end{figure}.
 
 The extracted scenes for VQA consist of 5 frames images taken from the view point where the navigator is supposed to stop. In figure \ref{vqaconstruct} we see an illustration of the structuring of the VQA data-set using the EQA task data-set (EQA-MP3D) and the scenes in Matterport 3D. The resulted VQA for VQA training is a Quesiton-Answer pair with a visual scene. 
 
-\paragraph{Data-set size & Question types}
+\paragraph{Data-set size \& Question types}
 
 The question-answer data-set contains three types of questions. Each question-type is generated in a string template.The templates are as the following:
 
@@ -145,17 +145,17 @@ The number of unique question-answers, however, is different from the number of 
 
 \paragraph{Data Bias}
 
-In all color questions (color & color\_room) in the train set, we observe that there is a total of 153  unique textual references. A 'reference', in this example, is a string that can refer to specific entity in specific or non-specific space. For example, 'sofa' in questions like "what color is the sofa?" is one reference. "sofa in the living-room", like in color\_room questions "what color is the sofa in the living room?", is a second reference. "sofa in the bedroom" like "what color is the sofa in the bedroom?" would be a third and different reference. In order to gain insight into the data, we normalized all the color questions by reducing them into questions of a reference type, and collect the number of answer choices found for each reference type in all color questions.\footnote{ Link to the statistical analysis of the data in a notebook  \url{https://github.com/Al-arug/EQA}.} 
+In all color questions (color \& color\_room) in the train set, we observe that there is a total of 153  unique textual references. A 'reference', in this example, is a string that can refer to specific entity in specific or non-specific space. For example, 'sofa' in questions like "what color is the sofa?" is one reference. "sofa in the living-room", like in color\_room questions "what color is the sofa in the living room?", is a second reference. "sofa in the bedroom" like "what color is the sofa in the bedroom?" would be a third and different reference. In order to gain insight into the data, we normalized all the color questions by reducing them into questions of a reference type, and collect the number of answer choices found for each reference type in all color questions.\footnote{ Link to the statistical analysis of the data in a notebook  \url{https://github.com/Al-arug/EQA}.} 
 
 
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.5]{latex/images/AnswerRef.png}
+\includegraphics[scale=0.5]{images/AnswerRef.png}
 \caption{The color questions in the training data sorted by textual reference. In total we find in all color questions 153 references. 17.8 percent of the references have one color answer as the only choice.  }
 \label{fig:AnswerRef}
 \end{figure}.
 
-We find that 17.8 percent of the references have one color answer as the only choice of answer, as seen in figure \ref{fig:AnswerRef}. This means that 17.8 percent, 1755 of allthe  9861 "color" & "color\_room" QA episodes in the train-set, have one possible color as an answer. This means, in these cases the model does not train on disambiguating any classes of color for the reference in the question. These data sample would instead tell the model that there is only one possible answer to memorise for this reference. (Appendices contain all the textual references found in the question)
+We find that 17.8 percent of the references have one color answer as the only choice of answer, as seen in figure \ref{fig:AnswerRef}. This means that 17.8 percent, 1755 of allthe  9861 "color" \& "color\_room" QA episodes in the train-set, have one possible color as an answer. This means, in these cases the model does not train on disambiguating any classes of color for the reference in the question. These data sample would instead tell the model that there is only one possible answer to memorise for this reference. (Appendices contain all the textual references found in the question)
 
 Second type of bias is the dominance of one color over the other choices in the question-answers with multiple color choices. (visualization to be added)
 
@@ -214,7 +214,7 @@ The VQA model is a CNN-LSTM architecture.The CNN encodes a 224x224 RGB images wi
 
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.35]{latex/images/VQA.png}
+\includegraphics[scale=0.35]{images/VQA.png}
 \caption{Architecture of the VQA model consist of and LSTM for language encoding, CNN for vision. The system is trained to combine the two with attention}
 \label{fig:VQ}
 \end{figure}
