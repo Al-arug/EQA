@@ -1,0 +1,310 @@
+
+
+
+
+
+
+% NI 21-09-27: subsection title - Multi-Modal Tasks
+\subsection{image captioning}
+
+% NI 21-09-27: https://arxiv.org/abs/1601.03896 - image captioning reference, you need to make a smoother introduction.
+Image captioning is an extensively researched field where visual-grounding is at the  center of its focus. The methods of image captioning provide insights helpful for tasks that combine vision an language. In this section we review two main methods used in image captioning,feature extraction and attention mechanisms.   
+
+
+\subsubsection{Feature extraction}
+
+% NI 21-09-27: If you are not talking about the first group and only about the second group, do not talk about this distinction. You need to say that image captioning models typically use encoder-decoder architecture, where Encoder is a pre-trained CNN and Decoder is a recurrent network, e.g. LSTM.
+Feature extraction methods can be divided into two main groups. The first group relies on statistical language models. The second group relies on encoder-decoder neural network model that deep extracts features.\cite{Imagecap}
+
+\paragraph{Encoder-Decoder(CNN-RNN)}
+% NI 21-09-27: A figure of encoder-decoder captioning model would be really great here. It would simply reading of the text.
+% NI 21-09-27: when you use \paragraph{}, you typically would not separate texts later with new lines. It looks like you have a lot of smaller paragraphs in a big paragraph section. This is a bit unnatural, so try to compress text and add figures to it. This would make it more visually pleasing. I think that the main comment here is that a lot of text here can be compressed in shorter, more condensed version of it. Use figures and visualisations to support your text instead of writing all details extensively.
+
+Convulutional neural networks are at the core of feature extraction methods. CNN applications, nonetheless, take a vital role in many computer vision tasks. We see CNN and its modified models (such as recurrent-CNN) used in tasks as object recognition \cite{liang2015recurrent} \cite{objdet} \cite{Ren2015FasterRT} , image classification \cite{simonyan2014very} \cite{imclassfication},and  semantic segmentation \cite{hariharan2015hypercolumns} \cite{imseg}. 
+
+% NI 21-09-27: The way how CNNs function should be accompanied by the figure (comment above), and then you can follow this figure in text and describe what they take as an input and how they process it. You cite Vinyals who has excellent description in the paper, that you can look at and do something similar.
+% NI 21-09-27: There are many ways to represent image. You can do it as a single vector for the whole image (Vinyals). Or you can split it into either a uniform grid of cells or detect objects - briefly mention Anderson et al. 2017 as a better approach to represent images https://arxiv.org/abs/1707.07998. The latter method is state-of-the-art in captioning.
+A main reason for using CNN for image processing  is its ability to reduce the high dimensionality of images. Image features contain large sizes represented in pixels which would require large number of parameters to train. CNN reduces the dimensions of an image by learning how to process a matrix from a large window such as 250x250 pixels into a smaller one as 25x25. Through computing the convolution values of the image matrices and executing pooling computations, this process reduces the image into a smaller representation. The latter reduces the computational load and helps in processing and classifying the images faster.
+
+% NI 21-09-27: add show, attend and tell paper here. And describe attention mechanism - it is an important asset for captioning and also for your embodied systems. You might want to refer to discussion on attention later in the thesis, so it would be nice if you have a paragraph about it.
+The encoder-decoder caption generation has a CNN encoder and an RNN decoder.\cite{vinyals2015tell} is an example of an end-to-end neural captioon generation model. In the neural model the CNN process the image features, and the last hidden layer passed to an RNN to generate a description. This method is a sequence modeling that is similar to machine translation. This means that image features are translated into words. The sequence is predicted by finding the probability of a certain description from a corpora given the features of an image. 
+
+RNN are known to be used widely in language technology applications. Rnn is used , for example in  text-to-speech \cite{arik2017deep} and  machine-translation \cite{cho2014learning},\cite{Wu2016GooglesNM}. The advantage that the RNN gives to these tasks is that the output size is not fixed and that each output depends on the previous one. Such an incremental-sequence prediction is suitable for sentence predictions in respect to word dependency.  
+
+% NI 21-09-27: I am not sure about the next two paragraphs. I think that generally saying that LSTMs are used instead of RNNs because of the vanishing gradient problem (and giving one reference) would be enough. It is not neecessary to go into RNN vs LSTM because you are not addressing it in any form in the experiments.
+RNNs have a issue of vanishing gradient-descent. The gradient descent is an optimization algorithm that minimizes the error calculated in the loss function. Optimization, in brief description, is important for the learning process. It updates the model's parameters which determines the  direction taken in the next time-step. This information is calculated given the input-output and the values of the parameters from the previous time-stamps. The gradients is reduced at every step due the value deductions in the activation function. When the gradient is reduced to almost zero value, it will be updating the parameters with no useful values, and therefore, learning seizes to improve. 
+
+Long-Short-Memory network (LSTM)  provides a good alternative for avoiding the disappearing gradient. The gradient in RNNS vanishes in long sequences where the gradient keeps reducing. The architecture of the LSTM allows it to keep information stored for very long sequences. The latter gives it the ability to control the values of the gradient by updating it with information stored in the 'forget gate' form previous steps, preventing the gradient from vanishing.  
+
+
+% NI 21-09-27: I would also remove this paragraph, this provides some information which is not that much necessary for general overview of captioning models.
+\paragraph{Feature extraction- statistical language model}
+
+Statistical language model, as in \cite{fang2015captions}, generate descriptions in three stages. First it detects words in an image using a convolutional neural network (CNN) for extracting image features. The incorporation of language at this stage happens using multi-instance learning(MIT)\cite{zhang2005multiple}. The second stage, the statistical language model detects the most likely sentence to make of the words from a pre-defined corpus. In the third stage the sentences undergoes a re-ranking stage where the sentences are combined to generate captions. 
+
+
+%\subsubsection{Attention-mechanisms}
+
+
+% NI 21-09-27: overall structure of the whole subsection above should be something like that:
+% 1. what is the task of image captioning? What is it used for?
+% 2. describe encoder-decoder architecture with figure and texts (describe how encoder takes image and how it gives information to the decoder, which generates caption
+% 2.1 describe what is the input to the CNN and what is the input to LSTM in a bit more detail
+% 2.2 talk about attention (show attend and tell paper) and say what are the benefits of attention (attention is better because the model can look at the most salient regions/parts in the image, the system becomes more focused on semantically important parts of the image, which is also similar to how humans describe images - we do not focus on every single detail, instead we build concepts from what we see and mention only the most important bits of what we see.
+% 2. It would be nice to say why we are talking about encoder-decoder captioning models here. Because these architectures are adopted in more complex multi-modal tasks as part of the system, e.g. embodied question answering.
+
+
+\subsection{Dialogue and VQA}
+
+% NI 21-09-27: restructure the section and start with VQA, then move to visual dialogue. Embed the following reference in text: https://arxiv.org/abs/1612.00837. The paper shows issues with VQA dataset, e.g. bias towards language, and introduces a second version of the vqa dataset, more balanced. This paper can be described in a way to emphasise your own research question, because you are doing very similar thing.
+
+In this section of the text we discuss the capabilities of computers to exhibit more intelligent behaviour. Image-captioning and its methods showed an insight to how much computers could see and understand what its seeing. However, acquiring language in the visual world would require computers to be able to communicate what it sees. Otherwise, in order to say that a computer is visually or linguistically intelligent one should imagine the computer having to pass the Turing test in a visual surrounding. 
+
+% NI 21-09-27: describe all papers in order, starting from earlier work to later work (2011 - 2017)
+Researchers attempt to improve systems that are capable to hold a dialogue with a visual content. \cite{das2017visual} trains a system in  encoder-decoder model on a data set of 2 pairs dialogue with an image content.\cite{Skoaj2011ASF} trains a system on learning concepts with visual content in an interactive-learning approach. In the similar context of improving systems that are capable of having more natural interactions, we see example in \cite{Lin2014VisualSS} of a VideoQA. 
+
+% NI 21-09-27: This paragraph is here without any support. What do you mean when you say that we see less research on visual dialogue? That is not true. VQA is somewhat less complex then VisDial, because VQA is just a bunch of QA pairs, while in most of the VIsDial datasets you require memory and knowledge of discourse for the future questions. Also, in VisDial you do not have only question-answers following each other, there could be other elements - repairs, disfluencies, etc. The references to mention here: https://arxiv.org/abs/1907.05084, https://www.aclweb.org/anthology/2021.alvr-1.7.pdf, you can also find some work from CLASP people (Staffan must have something).
+To make a true statement about the computer's capability to engage in a visual dialogue, it must be first ensured that the computer actually understands the questions being asked to it. Otherwise, dialogue is very complex with many elements determining its succession. In a dialogue with visual content, the computer must, furthermore, understand the questions within their visual context. It is reasonable that we see increasing research on "Visual Question Answering" and less on visual dialogue as a whole. Improvements in VQA intuitively means that we are moving closer in the direction of having an interaction with a computer in a visual dialogue.  
+% NI 21-09-27: Embodied agents are expected to not only simply ask and answer questions, but engage in a conversation with humans. This means, that they can also produce a much bigger range of sentences - clarification requests, etc. I think your thought here is leading there. Or, at least, it should be leading there in the context of this section.
+
+
+ \cite{VQA} is the first notable data-set published for Visual Question answering (VQA). The data-set consist of open-ended and free-form questions. The data contains 250,207 images from MS COCO \cite{lin2015microsoft} and other abstract scenes.The question types in the dataset require a range of different capabilities such as common-sense reasoning, knowledge-based reasoning, object-detection and active recognition.
+ 
+ % NI 21-09-27: Make the idea of human workers writing question stronger. I think you want to say that these datasets are created by humans (unlike the EQA one, which you will describe later). Well, except the ren2015exploring. Start with saying that some datasets are artificial, and some are not. Give examples. Then say why synthetic datasets are created in the first place: they are cheaper, they are simpler to create, while it is harder to make humans ask questions and produce data that you need. A good reference and reading here: https://aclanthology.org/2020.coling-main.551
+ Data-sets that use MS COCO scenes such as \cite{gao2015talking}, \cite{yu2015visual} in addition to \cite{VQA} used human workers to write the texts for the scenes. Other data-sets are generated automatically such as \cite{ren2015exploring}. 
+
+
+\cite{zhu2016visual7w} introduces a  unique QA data-set. The Visual7W consist of questions about an image with objects marked with regions in the image. Object grounding with image region introduced in \cite{krishna2016visual} contains the largest data-set with regions for both VQA and Image-captioning. Object-region approach is intended to improve visual grounding, by marking the regions of the image that the strings refer to.
+
+%restricted visual Turing test to evaluate visual understanding. The DAQUAR dataset is the first toy-sized QA benchmark built upon indoor scene RGB-D images. Most of the
+
+% NI 21-09-27: In general, the sentences above need more connectivity, you can say more on these topics. I would suggest to restructure the text and make transitions smoother. We need more structure here (from captioning to vqa to visdial, then the point about real/synthetic). Embed literature as well.
+
+\subsection{Embodied Question Answering}
+
+\begin{figure}[H]
+\includegraphics[scale=0.4]{images/EmbodiedQuestionAnswering.png}
+\caption{The Robot is asked a question at a start position. It needs to look around, collect information and decide on the next step to take. When it recognizes the car, it stops and processes the scene to answer the question }
+\label{fig:EQA}
+\end{figure}. 
+
+% NI 21-09-27: when citing multiple papers, just use comma between them: \citep{habitat19iccv,szot2021habitat}. \citep will put your references in brackets, not need to make your own brackets. It seems like \cite would put things without brackets, so you can use it as replacement for citet. But citep/citet is generally preferred instead of citep/cite.
+
+Embodied Question Answering (\cite{embodiedqa}) \footnote{Link to the official page of EQA. It also includes other published papers about the task \url{https://embodiedqa.org/}.} is a new interactive task presented as one of the tasks within the Habitat Platform \citep{habitat19iccv,szot2021habitat}\footnote{Github link to the Habitat Platform. Information and code about EQA and the other tasks within Habitat can be found there \url{https://github.com/facebookresearch/habitat-lab}.}. The idea of the task is to allocate an agent at a random position in a 3D environment and ask it a question. To answer the question, the agent must intelligently explore the environment, collect information, and successfully navigate to the entity in question. EQA system navigates based on common reasoning, through an egocentric view, more or less imitating humans, it should be able to answer itself the common questions of "where am I?", "where to go next?" and if asked a question about the car, as seen in \ref{fig:EQA}, it should be able to reason that cars are usually situated outside or in the garage and look for the exit. Once it navigates successfully to a point where it recognizes the car, the robot should stop and answer the question.  
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{images/Vision-language.png}
+\caption{EQA in relation to other vision\&language multi-modalities}
+\label{fig:multimodal}
+\end{figure}
+
+
+In figure \ref{fig:multimodal} we see where EQA stands concerning other vision-and-language multi-modalities discussed earlier. In the language domain, we see single-shot and dialogue. VQA is a typical example of a single shot interaction, where the system is designed to take a single shot question and a visual scene and output an answer. On the other side of the language domain (dialogue), we see Visual Dialogue, where the interaction within a visual context is continuous. On the vision domain, we see that VQA Visual dialogue is distinguished from VedioQA and EQA by the visual input type. The robot in EQA is continuously moving while navigating, so it inputs the vision similar to videos. Finally, EQA is distinguished from the rest of the multi-modalities on the action domain by being active. Hence, action here refers to executions of commands in a physical space. EQA is action-active by its navigational functionality. The rest of the modalities are passive with no functionalities of physical action execution. 
+% NI 21-09-27: Overall, what are the benefits of EQA? What it provides that other tasks do not provide?
+
+% NI 21-09-27: Below you are describing novelty in terms of navigation, but our focus in on question answering. maybe you can combine this paragraph with the previous one and say that the novelty of the eqa task is shaped by both navigation and question answering. However, most of the research has focused on navigation tasks in this setting, you can cite other works by EQA guys here. What is missing is a deeper analysis of how system deals with question answering task. One recent addition towards improving QA is the following dataset - https://arxiv.org/abs/2011.08277, you should also include it in the background discussion here.
+The novelty of this system is that it presumably solves the problem of navigating and performing tasks in unseen environments. Many of the earlier studies that deal with navigation, such as \cite{kruijff2007situated},\cite{lauria2001training} require the system to have a localized map of the environment to be able to navigate in it. The problem of localization in robotic navigation is known as Simultaneous Localization and Map Building(SLAM) problem. SLAM is a problem where a robot should map an unknown environment without a GPS or local map. Simultaneous localization is when a robot discovers it is surrounding and simultaneously construct a map while aware of its changing location. This means that the robot should extract information from its surroundings and learn the map as it goes \cite{grisetti2010tutorial} \cite{938381} \cite{8482266}. 
+
+% NI 21-09-27: this paragraph seems out of place, should it be moved above when you talk about EQA?
+The answering system in the robot consists of two core components. The first is navigation, and the second is Visual Question Answering. In principle, the task should be performed in conjunction between the Nav and the VQA model. The navigation should lead the robot to a correct viewpoint then freeze its move. The VQA model should then take static image frames of the scene from the viewpoint where the Nav stopped and answer the question. 
+However, the system's design allows it to exclusively perform either navigation or visual question answering on baseline models. The ability to train and evaluate either of the modules is possible due to two different training setups.
+
+% NI 21-09-27: why is this in background? Background introduces main concepts shortly, you have already introduced what EQA is. The details below should be a whole separate section about how to train your own EQA system.
+\subsubsection{Training setups}
+
+The first setup is a connected system with training in Reinforcement Learning setup. % NI 21-09-27: if you describe the training procedure, do it from the start. What is the input to the model and how is it trained? It is not immediately trained with reinforcement learning, first, it learns to imitate the golden paths. Only then, the navigation is fine-tuned with RL.
+The training of the robot in RL happens based on the answer-based evaluation. The robot is rewarded if it completes the whole task using the two components connected.  The basis of evaluation in the RL setup is the answer prediction. The system is rewarded if it answers the question correctly, and to answer the question correctly, it needs to navigate to the right place and stop at a good view position so that the VQA system could have a relative and informative visual scene in order to answer the question. However, the researches in \cite{embodiedqa} elaborates that the system performs poorly when trained combined in RL. The navigation in the RL setup tends to position itself inaccurately at the stop-goal, which leads to passing distorted images to the VQA model. "Noisy or absent views" would confuse the question-answering model \cite{embodiedqa}. For the mentioned reason, there is no available RL-based system available for developers. 
+
+% NI 21-09-27: ah, I see, you talk about it here. This part should be the first part.
+The second setup is a system with the Nav and VQA components trained separately and differently. The navigation is trained in the 'Imitation Learning' setup, and  VQA is trained in Supervised Learning.\cite{hussein2017imitation} describes Imitation Learning as learning with a teacher, where a robotic system has to mimic the steps taken by its tutor. Imitation Learning is considered an effective solution, in particular, for navigational problems as its step-to-step learning restricts the freedom of systems; We see IL popular, for example, in navigational systems of ground vehicles \cite{silver2008high}. The available Nav and VQA models that are available for training and evaluation in the habitat platform are the baseline models.  The details of the training and the data used in each component will be described in more detail in the coming sections.
+The main point we attempt to convey here is that the answering system being researched is one with Nav and VQA components trained and tested differently. % NI 21-09-27: not sure about this last sentence. I think what you are trying to describe is just to inform the reader about the training process of the agent (with imitation learning and RL). Just follow the paper and combine the two paragraphs you already have. There is no way we test QA system, which is trained different from how it is done in the original paper, so no need to somehow make it the main point. Just say that the nav system has been fine-tuned and also explain why fine-tuning was needed (it's in the paper).
+
+\subsubsection{Data} 
+
+% NI 21-09-27: an example of the room map from matterport would be good here, something similar to what they have in the original matterport website main page
+
+The dataset for the EQA task is called "EQA-MP3D," and it is a synthetic dataset generated automatically.\footnote{The dataset can be found on the Github page of the Habitat Platform, attached in the main page in the section' Task Data-sets' \url{https://github.com/facebookresearch/habitat-lab}.}  The EQA-MP3D task dataset is applicable for navigation and VQA, meaning that training the navigation and VQA use the same dataset.  We refer to each question-answer in the EQA dataset as an "Episode" because each QA sample includes a complete trainable navigation episode. We could describe the QA episode as a function executed in a 3D environment to yield an answer. 
+
+The 3D environments used in the task are indoor environments from the Matterport 3D(MP3D) dataset \cite{eqa_matterport}.\footnote{ The GitHub reop of the Matterport 3D \url{https://github.com/niessner/Matterport}.} The MP3D is 3D constructed scene dataset which contains 90 segmented houses. The EQA trains the robot in 57 MP3D environments and tests the robot in 10 other unseen MP3D environments.  
+
+\paragraph{Data in the Navigation training}
+
+In each QA episode, the information mainly used for navigation is a question,  an ID for the 3D environment, a unique starting position, a destination goal, and a path to the destination. % NI 21-09-27: if you describe input this way, you need to use math for this. $s_i$ is a unique starting position, etc...it is somewhat conventional/useful/convenient/better to put math-based things here together with words.
+The mentioned navigational information, excluding environment ID and question,  are all represented in frequencies of coordinates. The starting position indicates where the agent should be spawned relative to the given environment.  The path is the shortest path that the agent would take to reach the goal, consisting of steps and rotations. The shortest path is data used for Imitation Learning as the robots have to imitate the steps found in it. The goal is the stop point that marks the end of the episode. The stop point of the navigation is the viewpoint of the entity in question. 
+
+\paragraph{Data in VQA training}
+
+In each QA episode, the information used for training the VQA model is an ID for the 3D environment, a question, ground truth answer, and the position of view. % NI 21-09-27: same as my last comment - when you talk about the input (what is used for training), you need to make it more formal with all mathematical notations etc, something similar to what you have when you describe input to the navigator down below
+The mentioned information is automatically taken in a code part of the Habitat platform and reconstructed into a conventional  VQA dataset, QA pair, and a visual scene. The visual scenes are extracted using the view positions given in each QA episode in the corresponding 3D environment represented by the ID. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{images/VQAConstruct.png}
+\caption{Locations of viewpoints of the entity taken from an EQA episode to extract a visual scene. The visual scene is then constructed with a QA pair to form a VQA sample of 5 frames of images, question and ground truth }
+\label{fig:vqaconstruct}
+\end{figure}.
+
+The extracted scenes for VQA consist of 5 frames images taken from the viewpoint where the navigator is supposed to stop. In figure \ref{fig:vqaconstruct} we see an illustration of the structuring of the VQA dataset using the EQA task dataset (EQA-MP3D) and the scenes in Matterport 3D. The resulted VQA for VQA training is a Question-Answer pair with a visual scene. 
+
+\paragraph{Data-set size \& Question types}
+% NI 21-09-27: I see that you are giving explicit description of the EQA task with all these paragraphs. Make it a separate section, right after Background.
+The question-answer data set contains three types of questions. Each question type is generated in a string template. The templates are as the following:
+
+\textbf{- color\_room} template: "what color is <obj> in  <room>?"In these questions, the agent needs to find the room in question, look for the object, and answer the question. For the agent to be successful at reaching its target, it needs to know the difference between rooms, and objects, by implicitly recognizing that a certain room is a living room and not a bathroom and such.  
+
+\textbf{- color} template: "what color is <obj>". The difference between "color" type and "color room" is that no room is specified in the "color" type of question. In the "color" type, the agent needs to figure out where to look by itself. For example, "what color is the fridge?" the robot needs to implicitly figure that the fridges are usually in the kitchen and navigate to the kitchen to answer the question. In other cases, the object could be in the vicinity of the robot's starting point so that all it needs to do is to look around. 
+
+\textbf{- location} template: "What <room> is the <obj> located in". 
+
+In EQA-MP3D, each object in a question is unique to the room. The latter means that for an object to be selected for a question, there needs to be only one instance of that object existent in the room. The reason for this is to avoid ambiguity and not to confuse the agent if there happen to be more instances of the same object in the room. 
+
+There is a total of 11496 question episodes in the train split and 1950 question episodes in the "Val" split. As seen in figure \ref{fig:questioncount}, in the train split, there are 1830 episodes of "color" type, 8031 episodes of "color room," and "1635" of location type. For the validation split, there are 1335 "color room" questions, 345 "color" questions, and 270 "location" questions. 
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.45]{images/Train.png}
+\includegraphics[scale=0.45]{images/Val-set.png}
+\caption{Number of question-answers represented by their types in the Train and Validation set}
+\label{fig:questioncount}
+\end{figure}
+
+However, the number of unique question-answers is different from the number of episodes—a unique question-answer as a question-answer of the same strings and visual scene. For every unique question-answer and goal (scene), there are 15 different starting positions and shortest paths for the robot to train on for navigation. This means every unique QA in VQA is repeated 15 times. For example, in the validation set, the number of unique questions (same QA and goal-scene) of "color" type is 23, we multiply it with 15 (the number of starting positions for every unique goal), and we get 345, the number of episodes for "color" type in Val-set as seen \ref{fig:questioncount}. In the train set, the number of unique visual-question-answer for "color\_room" is 536, for "color" is 122, for "location" is 109. In the Val-set, the number of unique visual-question-answer for "color\_room" is 89, for "color" is 23, for "location" is 18. 
+% NI 21-09-27: here, things like ``color\_room'' should be formatted differently. Use italics or texttt, for example.
+
+
+\paragraph{Data Bias}
+
+In all color questions (color \& color\_room) in the train set, we observe a total of 153  unique textual references. % NI 21-09-27: 153 unique answers? what are 'textual references'? Do not make complex notations, you can just say that, for example, different sofas in different questions do not refer to the same sofa.
+A 'reference,' in this example, is a string that can refer to a specific entity in a specific or non-specific space. For example, 'sofa' in questions like "what color is the sofa?" is one reference. "sofa in the living room," like in color\_room questions "what color is the sofa in the living room?", is a second reference. "sofa in the bedroom" like "what color is the sofa in the bedroom?" would be a third and different reference. In order to gain insight into the data, we normalized % NI 21-09-27: this is not normalisation, just explain better what have you exactly done. 'reducing to a particular reference type' - what does it mean? You counted all unique sofas (depending on where they appear, e.g. living room, bathroom, etc) and examined the distribution of answers for questions about these sofas? Unclear a bit.
+all the color questions by reducing them into questions of a reference type and collect the number of answer choices found for each reference type in all color questions.\footnote{ Link to the statistical analysis of the data in a notebook  \url{https://github.com/Al-arug/EQA}.} 
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{images/AnsRef.png}
+\caption{The color questions in the training data sorted by textual reference. In total we find in all color questions 153 references.
+% NI 21-09-27: you need to give an example of these 'references'. It is unclear what you mean with them. We need to talk about these references more.
+22.4 percent of the references have one color answer as the only choice.  }
+\label{fig:AnsRef}
+\end{figure}.
+
+We find that 22.4 percent of the references have one color answer as the only choice of answer, as seen in figure \ref{fig:AnsRef}. This means that 22.4 percent, around 2208 of all the  9861 "color" \& "color\_room" QA episodes in the train-set, have one possible color as an answer. This means, in these cases, the model does not train on disambiguation any classes of color for the reference in the question.
+% NI 21-09-27: this means that there is typically a single colour as an answer, and the model might learn this bias because of such frequency. Is it correct? Say it a bit simpler.
+Instead, these data samples would tell the model that there is only one possible answer to memorize for this reference. (Appendices contain all the textual references found in the question)
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{images/biasperRef.png}
+\caption{}
+\label{fig:biasRef}
+\end{figure}
+
+% NI 21-09-27: this is very similar to what you said before...I am confused, we need to talk about these biases.
+The second type of bias is the dominance of one color over the other choices in the question-answers with multiple color choices. In \ref{fig:biasRef} we categorize references per answer-choice. References that has two answer choice in one category, references with three answer choices in one category, and references with 4 answer choices in a different category. The bias for each category is determined differently. In the references with category two answers, a reference is considered to contain biased QA if the answer in 75\% of the instances of the answer is the same . For the categories 3 answer choice and 4 answer choice, biased is considered if one answer made up 50 percent of the answers in each reference.  In total we get that 23.5\% of the references with two answer choices are biased. 51.2\% of the references with 3 answer choice are biased, and 17.5\% of the references with 4 or more possible answers are biased.
+
+
+\subsubsection{Navigation Model}
+
+
+Habitat's navigation is referred to as PACMAN. It consists of two core components, planner and controller. The planner takes inputs from the vision and language model, and the encoding of hidden-layer and action of the previous time-step then outputs action-decision. 
+
+\begin{figure}[H]
+\centering
+% NI 21-09-27: center all your figures
+% NI 21-09-27: also, while I remember, for math formulas and anything mathematical (h_t, etc), use \align environment and put them in the center. Do it if you want to put them as equation. I have seen in other parts of the thesis that you do it sometimes, but do it consistently.
+\includegraphics[scale=0.53]{images/nav.png}
+\caption{}
+\label{fig:nav}
+\end{figure}
+
+The controller takes the previous hidden state and action decision and executes the action. As seen in \ref{fig:nav}, visual input is passed to the control then the controller classifies the following decision of two possible decisions. Either to repeat the last action given by the planner or to return to the planner. The controller can repeat the same action maximum of five times then it automatically returns to the planner. 
+
+Visualization of the navigation is in figure (1). T stands for the planner's time-steps, t = 1,2,3...., and N(t),  n = 0,1,2,3.. denotes the controllers time-steps. The denotations of symbols explained clearer in the quotation : 
+
+% NI 21-09-27: use $$ for math environment, not \begin{math}.
+
+"\begin{math}  I_{t}^{n} \end{math}denote the encoding of the observed image at t-th planner-time and n-th controller-time. The planner is instantiated as an LSTM. Thus, it maintains a hidden state \begin{math} h^{t}\end{math}
+(updated only at planner timesteps), and samples action 
+\begin{math}  a_{t} \ \in \ \{forward,\ turn-left,\ turn-right,\ stop\} \end{math} "p(6)
+\vspace{0.3cm}
+
+For example, the first  step-decision from the planner is denoted as such: 
+
+% NI 21-09-27: this should be an equation in align environment
+\[ a_{t} ,h_{t}{}\leftarrow PLNR\left( h_{t-1} ,I_{t}^{o} ,Q,a_{t-1}\right) \]
+        
+
+
+The planner computes the next step-action  \begin{math} a_{t+1} \end{math} from input of the previous hidden layer \begin{math} (h_{t-1}) \end{math}, question encoding (Q), the previous action  \begin{math} a_{t-1} \end{math}, and the image input given to the PlNR \begin{math} (tI_{t}^{o}) \end{math}.The planner selects the action \begin{math} a_{t+1}\end{math} and update the hidden state \begin{math} h_{t+1} \end{math} then passes the control to the controller. 
+
+
+
+
+The controller decides to either repeat the action or return control to the planner. The controller's classification is based on the current hidden-state\begin{math} h_{t}  \end{math} and current action \begin{math} a_{t} \end{math} and the image observation from the planner + the image given at the controller's time-step. The denotation of the classification is as such: 
+
+ % \left h_{t}^{n} \right \backepsilon
+
+\[ \{0,1\}   \ni \ c_{n}^{t}  \leftarrow CTRL \left(h_{t} ,a_{t} ,I_{t}^{n}\right)  \]
+
+"if \begin{math} c_{n}^{t} = 1 \end{math} then the action \begin{math} a_{t} \end{math} repeats. Else \begin{math} c_{n}^{t} = 0 \end{math} or a max of 5 controller-times been reached, control is returned to the planner"p(6). The \begin{math} h_{t} \end{math}   \begin{math} a_{t} \end{math} coming from the planner act as an intent. The controller, initiated  as "feed-forward multi-layer perceptron with 1 hidden layer",repeats and controls the action in order to align \begin{math}  I_{t}^{n} \end{math} with intent given by the planner. 
+
+\subsubsection{VQA Model}
+
+
+
+The VQA model is a CNN-LSTM architecture. The CNN encodes 224x224 RGB images with a "multi-task pixel-to-pixel prediction framework" (p6) encoding. The structure of the CNN4 {5x5 Conv, BatchNorm, ReLU, 2x2 Max-Pool blocks}, and they produce a fixed-size representation. "The range of depth values for every pixel lies in the range r0, 1s, and the segmentation is done over 191 classes" (p.11) \cite{embodiedqa}. The "lstm" is a 2-layer LSTM with 128d hidden layers.
+
+
+
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.35]{images/VQA.png}
+\caption{Architecture of the VQA model consist of and LSTM for language encoding, CNN for vision. The system is trained to combine the two with attention}
+\label{fig:VQ}
+\end{figure}
+
+
+
+The CNN extracts features from five images(5 frames) scene, and the LSTM encodes the textual features of the question. Combining the visual and linguistic features is done through computing similarity via dot product and concatenation. First, the similarity between each image and the question features is computed via dot product. A softmax converts the question and image similarity into attention wights then the question encoding is concatenated with them. The concatenated features are then classified in a softmax, where the answer probability is distributed over 172 answers.(\cite{embodiedqa},p6)
+
+
+
+\subsection{Problem}
+
+In an experiment we conducted on the VQA model, we observed that the system tends to answer the questions relying mainly on the textual input in the questions (bias)\footnote{ Link to the experiment "Testing VQA's reliance on vision "\url{https://github.com/Al-arug/Habitat-Project}.} The idea of the experiment was to give the model a random image instead of the original scene and see if it affects its predictions. The results showed that the system gave correct answers despite the absence of the corresponding scene required to answer the question. In such a case, the system's performance would typically have worsened, not improved, as the required visual information to answer the question is missing. The correct answering by the system was demonstrated in an overall increase in the performance score. Its ability to answer correctly demonstrates its reliance on the language model to predict the answer. 
+
+The system's ability to predict answers correctly in the experiment indicates a lack of visual grounding. We draw this conclusion from the observation that vision did not influence the predictions. This means that the system, in training, has not learned a scheme for word-meaning in association with vision. Grounding language in vision is when we connect the "high-level" symbolic representations such as language to a "low-level" non-symbolic representation such as the sensory (visual) features. The ability to ground language in vision is essential for any task requiring "seeing" and attending answer. If a robot successfully learns to align and combine the two types of representations, one could say that the computer understands what it sees (visual grounding). When a system fails to achieve such a connection, we define the problem as the "Symbol system problem" (\cite{harnad1990symbol}) or 'lack of visual grounding.' 
+
+
+We presume that the lack of visual grounding is attributed to bias in the dataset. Earlier in this text, we reviewed textual biases within the EQA dataset. Having biases in the dataset would hinder the learning process, as it gives the model a way to learn to avoid combining vision and language by giving correct answers without actually learning to combine the two types of data. 
+
+We also observe that the type of questions asked are simplistic and can be considered unnatural. The existent color questions in the dataset are not the type of questions that a human would naturally ask. The limited types of questions found in the dataset seem to be meant to simplify the robot's task with a primary focus on navigation.
+
+
+\subsection{Problem in a context}
+
+(\cite{selvaraju2020squinting},\cite {goyal2017making}) and other research within the VQA point out the problem where models learn biases in training and manage to give good results in the testing.\cite{johnson2017clevr} elaborate that the underlying issue here is that the model answers by memorizing prior textual information. For example, a neural network might answer the question "What covers the ground?" correctly by answering "snow," "not because it understands the scene but because biased datasets often ask questions about the ground when it is snow-covered." \cite{fukui2016multimodal} clarify that the models' answer-cheating is demonstrated when a VQA system primarily relies on the language model and ignores the visual information. Such a learning problem is crucial because it makes it challenging to evaluate the model's improvements\cite{agrawal2018don}.
+
+When a system cheats its way into answering the questions, it shows a lack of visual grounding\cite {goyal2017making}. Visual grounding (understanding the meaning of words about vision)is crucial because we want the systems to understand the reasoning steps that humans would logically take to answer a question \cite{agrawal2016analyzing},\cite{zhang2016yin}, \cite {fukui2016multimodal}. For the system to be able to reason its way to predict an answer, it must first capture the full meaning. \cite{selvaraju2020squinting} explains that learning to reason would require the systems to make inferences at "multiple levels of abstraction." For example, "is the banana ripe?" where it would instantly answer "no."  Answering this question would require the system to rely on perception to answer sub-questions such as where is the object? What are its shape, size, and color? Then reason that the "yellow" color indicates ripeness.\cite{selvaraju2020squinting}
+
+\subsection{Research Questions}
+\begin{itemize}
+
+
+\item How can we extend the dataset with more sophisticated and natural questions? (A useful robot should answer a variety of questions.)
+
+Adding new questions could help test the system's capabilities, but more importantly, we consider it a step to enhance the system's cognition. The VQA system that we are improving is part of a robotic system that should ideally be helpful for human use. Social robot's usability is very dependent on its exhibition of human intelligence \cite{fong2003survey}.
+
+\item How does the VQA system perform with the new question types? 
+
+\item Does asking questions of spatial and size types improve the system's attention to vision? (Evaluating it based on the performance on color questions) 
+
+
+\end{itemize}
+ 
+
