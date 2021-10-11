@@ -1,0 +1,121 @@
+Typo: capitalise
+
+Typo
+
+Cannot use abbreviations in text
+
+How is this done?
+
+The previous might be hard to understand by someone not familiar with how the dataset is structured. Why don’t you describe what information is needed to answer each template and where do we get this from?
+
+Emphasise that the annotated dataset names slightly differently than what our robot (Habitat) perceives/provides
+
+Capitalise
+
+Reference?
+
+sorted
+
+$\times$
+
+Mention that this is simplified generation of spatial descriptions based on geometry only. In reality there are other factors involved but which we do not deal with but refer to the work we have done on functional geometric relations before.
+
+Reference to GitHub
+
+What is the motivation behind the formula?
+
+Possibly A would count as on also if the top object does not fall off the bottom one. This is where extra-geometric knowledge comes into play.
+
+Do we say somewhere why we choose these relations?
+
+But they should also overlap on the x axis.
+
+Capitalise Figure
+
+The view would determine the coordinate frame for the axis. So in the second case the y axis of the object would overlap and therefore they would be behind.
+
+It would be good if you explained first what we understand about the semantics of these descriptions and then how we model them geometrically.
+
+Why new episode? Are we not adding to the existing ones?
+
+This is only to fit the generation with the current setup
+
+Capitalise Figure
+
+Avoid abbreviations
+
+Typo
+
+But this could mean that train and validation set have the same questions and answers. But probably the likelihood of this is very low - given the number of episodes and objects?
+
+Hm, perhaps this was not the best idea then - since most objects get classified as medium. Standard deviation and mean describe normal distribution and it looks like the volumes of all objects follow normal distribution and hence the standard deviation represents the maximum values, everything else is within these values and what lies outside is outliers. A better way would therefore be to find a threshold within the standard deviation bounds. Add to the discussion?
+
+Typo
+
+Typo
+
+A good idea would be to start each section with an algorithm. - schematic point description what are the steps that are taken. Then this algorithm is described in text.
+
+Missing
+
+This should be explained earlier at the beginning of the section where you discuss what questions you are going to model.
+
+Ok, but now the figure contains balanced answers. As we discussed include both options and say that imbalance is motivated by the Regier’s discussion.
+
+I don’t understand the discussion below. Why does the training set have big and medium but validation has only small?
+
+But Habitat and the dataset are quite different. Habitat is our robot that has a semantic labelling component. The dataset is an annotated dataset. The labels of objects are common to both but their purpose is quite different.
+
+But being able to map the objects better would help this task.
+
+Are you sure? Are A and B next to each other? No, they are close to each other. where both next and close apply but close is a better match.
+
+This problem could be solved by using word embeddings and term similarity.
+
+Re insufficient visual data: it would be better to say that there is bias in the visual information and that some situations are more common than others in this domain. Language is linked to these situations. Hence, books are commonly found on tables. But with every such image we do not have an image of a table Only. This is because we are modelling the experience of a robot rather than creating a dataset of abstract training instances.
+
+Would be useful to see whether the model is really learning or not, if the figures are stable.
+
+Refer back to the page where you describe the model
+
+Loss is only informative if you compare it across the epochs so we can see that it is consistently going down and therefore learning is happening Why the last epoch and not the best epoch? Yes, we would really need a lab accuracy and loss graph for both training and testing to fully support our conclusion.
+
+It would be good if you made this section more focused and therefore clearer by following the following structure: (1) What are the questions we want to model? Why are they interested from the linguistic perspective? (2) What information we need to answer these questions? Where do we get it from? What are the features? What are the limitations of these features regarding the previous linguistic perspective? (3) How do we extract these features - algorithm? (4) How do we generate questions - algorithm? (5) What are the limitations of this generation? What semantic facts about the questions we did not consider? (5) What are the limitations regarding generating an unbiased dataset.
+
+Average?
+
+Therefore we need to look at the score for individual question types. The baselines in each case are the frequency of the most frequently occurring class.
+
+But that is just for size. This is a speaking against our goals since we said that our goal is unbiased dataset.
+
+Very strange. So the performance on the big is 0. Perhaps there is something wrong with generation of these values. I think now that we should have done the generation of size questions differently - see my earlier comment.
+
+This looks much better. From the confusion matrix you can now calculate the F score for each class and then the average F score.
+
+But they are not, they are roughly the same. Also, you said earlier that negative answers are plenty and we can easily control how many we include since most of them have to be discarded.
+
+That’s not true. If overfitting happens (data remembered) the system performs very well on training dataset but badly on testing. If I t performs well on testing (unseen) then learning has happened.
+
+Figure
+
+How we should read this confusion matrix. Lines are the actual class and columns are the predicted class? Add this explanation in the figure caption.
+
+Row. Figure b.
+
+It would be good if the figure also showed the sum of items for each row
+
+What do you mean by “the same questions”. Training, validation and testing should never contain the same instances. It could be that the question is the same but the scene is different. Hence, the middle has to connect the question and the visual information.
+
+Ok, but this says that it be distribution reduces the performance, so it is bad? We ended up with a random classifier? Or do the predictions make sense now?
+
+Or that the classifier performs randomly.
+
+Yes, but before you were saying that we have not achieved balance. You should compare all the scores against the baseline which is the frequency of the most frequent label., i.e. the majority class.
+
+We would need to evaluate whether such predictions make sense.
+
+Yes, but for language technology this is not good news. The system should be able to deal with distracting objects. Actually, for QA we are more interested if the eye m would be able to answer a question for an object that is not the most prominent object in the picture.
+
+These points should go in the background discussion / literature survey.
+
+The final message of this section is a bit unclear. We first argue that we will extend the dataset to remove the bias on the colour question but the discussion here concludes that there is bias elsewhere including in the newly introduced questions and the performance is unclear. I think it would be interesting to compare both the biased answers and the equal answers and keep the point by Regier if possible. For the cases where it is not possible to create biased answer distribution we explain that this is because of other variables/context; namely a learning instance is not just a question but a question, situation and answer. Situations follow a certain distribution since this is a continuous real environment rather than individual instances. Then we evaluate the learning. We need the baseline, most frequent class. Loss and accuracy over epochs for training and testing. Choose the best performing epoch. Confusion matrices: are the confusions good or bad? Qualitative evaluation of some real examples, both good or bad. Currently, we cannot conclusively say that distribution of answers is due to more focus on vision and a better variety of questions. The classifier could be only relying on text and since this is more varied, it gets more confused. We need to show that the confusions are intuitive.
